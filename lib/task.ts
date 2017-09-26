@@ -13,7 +13,7 @@ export default class Task {
 
   map(callback: (current: any, index: number, state: State) => any): Task {
     this.promise = this.promise.then((prevValues: State[]) => {
-      this.reporter.print(`➡️`);
+      this.reporter.print(`===== ➡️  map =====`);
       const promises = prevValues.map((element: State, index: number) => {
         const ret = callback(element.data, index, element);
         return ret;
@@ -30,7 +30,7 @@ export default class Task {
 
   filter(callback: (current: any, index: number, state: State) => boolean): Task {
     this.promise = this.promise.then((prevValues: State[]) => {
-      this.reporter.print(`✂️`);
+      this.reporter.print(`===== ✂️  filter =====`);
       const newValues = prevValues.filter((element, index) => {
         return callback(element.data, index, element);
       });
@@ -41,7 +41,7 @@ export default class Task {
 
   print(): Task {
     this.promise = this.promise.then((prevValues: State[]) => {
-      this.reporter.print(`😀`);
+      this.reporter.print(`===== 😀  print =====`);
       prevValues.forEach((value, index) => {
         console.log(`${index} Value: ${value.data} Context: ${value.context}`);
       });
