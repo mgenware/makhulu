@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "sourceMap": true,
+        "baseUrl": "lib",
+        "target": "ES5",
+        "noImplicitThis": true,
+        "outDir": "dist"
+    },
+    "include": [
+        "lib/**/*",
+        "test"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

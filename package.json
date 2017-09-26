@@ -1,0 +1,36 @@
+{
+  "name": "makhulu",
+  "version": "0.0.1",
+  "description": "A smart task runner",
+  "main": "dist/main.js",
+  "author": "Mgen (https://www.mgenware.com)",
+  "homepage": "https://github.com/mgenware/makhulu",
+  "bugs": "https://github.com/mgenware/makhulu/issues",
+  "keywords": [
+    "task runner"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mgenware/makhulu.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "*",
+    "typescript": "^2.5.2"
+  },
+  "scripts": {
+    "test": "yarn run compile && mocha \"dist/test/*.js\"",
+    "build": "tsc && yarn test",
+    "compile": "tsc",
+    "dev": "tsc -w"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "cli-progress": "^1.6.0",
+    "fast-glob": "^1.0.1",
+    "fs-syncx": "^0.0.4"
+  }
+}
