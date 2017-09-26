@@ -12,9 +12,8 @@ export default class Task {
   }
 
   map(callback: (current: any, index: number, state: State) => any): Task {
-    this.reporter.print(`➡️`);
-
     this.promise = this.promise.then((prevValues: State[]) => {
+      this.reporter.print(`➡️`);
       const promises = prevValues.map((element: State, index: number) => {
         const ret = callback(element.data, index, element);
         return ret;
@@ -23,19 +22,30 @@ export default class Task {
         return values.map((item, index) => {
           return new State(prevValues[index].context, item);
         });
-      }).then((values) => {
-        return values;
       });
       return waitPromise;
     });
     return this;
   }
 
-  filter(callback: (current: any, index: number, state: State) => boolean): any[] {
-    this.reporter.print(`✂️`);
-    return null;
-    // return this.states.filter((item, index) => {
-    //   return callback(item.data, index, item);
-    // });
+  filter(callback: (current: any, index: number, state: State) => boolean): Task {
+    this.promise = this.promise.then((prevValues: State[]) => {
+      this.reporter.print(`✂️`);
+      const newValues = prevValues.filter((element, index) => {
+        return callback(element.data, index, element);
+      });
+    });
+    return this;
+  }
+
+  print(): Task {
+    this.promise = this.promise.then((prevValues: State[]) => {
+      this.reporter.print(`😀`);
+      prevValues.forEach((value, index) => {
+        console.log(`${index} Value: ${value.data} Context: ${value.context}`);
+      });
+      return prevValues;
+    });
+    return this;
   }
 }
