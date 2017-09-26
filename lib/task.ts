@@ -34,6 +34,7 @@ export default class Task {
       const newValues = prevValues.filter((element, index) => {
         return callback(element.data, index, element);
       });
+      return newValues;
     });
     return this;
   }
