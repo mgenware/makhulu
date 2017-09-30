@@ -14,7 +14,6 @@ export default class JSFactory {
       states = array.map(i => new State(contextFactory(i), i));
     }
 
-    console.log(' -- create new tasks ', states);
     return new Task(states);
   }
 }
