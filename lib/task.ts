@@ -1,6 +1,7 @@
 import State from './state';
 import IReporter from './reporter';
 import DefaultReporter from './reporters/defaultReporter';
+import EmptyReporter from './reporters/emptyReporter';
 const Promise = require('bluebird') as any;
 
 export default class Task {
@@ -10,6 +11,17 @@ export default class Task {
     this.reporter = new DefaultReporter();
     this.promise = Promise.resolve(states);
   }
+
+  then(callback: (values: any[], states: State[]) => any) {
+    this.promise = this.promise.then((prevValues: State[]) => {
+      const ret = callback(prevValues.map(state => state.data), prevValues);
+      if (ret === undefined) {
+        return prevValues;
+      }
+      return ret;
+    });
+    return this;
+  } 
 
   map(callback: (current: any, index: number, state: State) => any): Task {
     this.promise = this.promise.then((prevValues: State[]) => {
