@@ -12,13 +12,10 @@ function makePromise(name, delay) {
 }
 
 ma.js.array([2000, 200, 2]).map((n, index, state) => {
-  console.log('------', n, index, state);
   return makePromise(n, n);
-}).map((n, index, state) => {
-  console.log('------', n, index, state);
+}).print().map((n, index, state) => {
   return n-1;
-}).map((n, index, state) => {
-  console.log('------', n, index, state);
-  return n-1;
-});;
+}).print().filter((n, index, state) => {
+  return n < 1000;
+}).print();
 console.log('run');
