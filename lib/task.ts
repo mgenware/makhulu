@@ -6,10 +6,17 @@ const Promise = require('bluebird') as any;
 
 export default class Task {
   reporter: IReporter;
-  promise: any;
-  constructor(public states: State[]) {
+  
+  private constructor(public promise: any) {
     this.reporter = new DefaultReporter();
-    this.promise = Promise.resolve(states);
+  }
+
+  static fromPromise(promise: any) {
+    return new Task(promise);
+  }
+
+  static fromInitialStates(initialStates: State[]) {
+    return new Task(Promise.resolve(initialStates));
   }
 
   then(callback: (values: any[], states: State[]) => any) {

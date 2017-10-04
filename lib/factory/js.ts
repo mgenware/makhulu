@@ -3,6 +3,7 @@ import Task from '../task';
 import State from '../state';
 
 export default class JSFactory {
+  // construct a Task from a JavaScript array
   static array(array: any[], contextFactory: (i: any) => Context = null): Task {
     if (array == null) {
       throw new Error('array cannot be null');
@@ -14,6 +15,6 @@ export default class JSFactory {
       states = array.map(i => new State(contextFactory(i), i));
     }
 
-    return new Task(states);
+    return Task.fromInitialStates(states);
   }
 }
