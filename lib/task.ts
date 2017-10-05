@@ -75,4 +75,17 @@ export default class Task {
     });
     return this;
   }
+
+  checkPrevStates(states: any): State[] {
+    if (!states) {
+      return [];
+    }
+    if (!Array.isArray(states)) {
+      this.throwInvalidStates(states);
+    }
+  }
+
+  throwInvalidStates(value: any) {
+    throw new Error('The resolved value of Promise should be an array of State objects.' + value);
+  }
 }

@@ -1,13 +1,13 @@
 import * as ma from '../lib/main';
 import * as assert from 'assert';
 
-describe('JS Factory', () => {
-  it('array', () => {
+describe('Factory.JS', () => {
+  it('array', (done) => {
     const array = [1, 4, 6, -4, 3];
     const task = ma.js.array(array);
-    assert.equal(task.states.length, array.length);
-    for (let i = 0; i < task.states.length; i++) {
-      assert.equal(task.states[i].data, array[i]);
-    }
+    task.then((values) => {
+      assert.deepEqual(values, array);
+      done();
+    });
   });
 })
