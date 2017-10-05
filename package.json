@@ -15,17 +15,19 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/globby": "^6.1.0",
     "@types/mocha": "^2.2.43",
     "@types/node": "^8.0.29",
     "mocha": "*",
     "typescript": "^2.5.2"
   },
   "scripts": {
-    "test": "yarn run compile && mocha \"dist/test/*.js\"",
+    "test": "yarn run compile && yarn run copy && mocha \"dist/test/*.js\"",
     "dev_test": "mocha \"dist/test/*.js\"",
     "build": "tsc && yarn test",
     "compile": "tsc",
-    "dev": "tsc -w"
+    "dev": "tsc -w",
+    "copy": "copyfiles \"test/data/**/*.*\" \"dist\""
   },
   "engines": {
     "node": ">=6.0.0"
@@ -34,7 +36,9 @@
     "bluebird": "^3.5.0",
     "chalk": "^2.1.0",
     "cli-progress": "^1.6.0",
+    "copyfiles": "^1.2.0",
     "fast-glob": "^1.0.1",
-    "fs-syncx": "^0.0.4"
+    "fs-syncx": "^0.0.4",
+    "globby": "^6.1.0"
   }
 }
