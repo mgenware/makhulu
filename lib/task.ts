@@ -85,7 +85,7 @@ export default class Task {
       this.reporter.printTitle(`😀  print`);
       this.reporter.printInfo(`${prevValues.length} state(s)`);
       prevValues.forEach((value, index) => {
-        console.log(`${index} Value: ${value.data} Context: ${value.context}`);
+        console.log(`${index} Value: ${value.data} Context: ${value.context.toString()}`);
       });
       return prevValues;
     });

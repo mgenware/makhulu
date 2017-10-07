@@ -1,5 +1,5 @@
 export default class Context {
-  map: { [key: string] : any; } = {};
+  private map: { [key: string] : any; } = {};
   
   getValue(key: string): any {
     return this.map[key];
@@ -7,5 +7,9 @@ export default class Context {
 
   setValue(key: string, value: any) {
     this.map[key] = value;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.map);
   }
 }
