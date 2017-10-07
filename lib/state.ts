@@ -1,5 +1,8 @@
 import Context from './Context';
 
 export default class State {
-  constructor(public context: Context, public data: any) { }
+  context: Context
+  constructor(context: Context|null, public data: any) {
+    this.context = context || new Context();
+  }
 }

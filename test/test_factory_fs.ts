@@ -12,11 +12,9 @@ function arrayToMap(array: string[]): { [key: number]: boolean } {
 
 function testGlob(title: string, glob: string, files: string[]) {
   it(title, (done) => {
-    const expFiles = files.map(f => path.join('dist/test/data'));
-    const task = ma.fs.fileNames('dist/test/data/' + glob);
+    const expFiles = files.map(f => path.join('dist/test/data', f));
+    const task = ma.fs.glob('dist/test/data/' + glob);
     task.then((values) => {
-      console.log(' 66666666 ', values);
-      console.log(' =---====== ', arrayToMap(values), arrayToMap(expFiles));
       assert.deepEqual(arrayToMap(values), arrayToMap(expFiles));
       done();
     });
@@ -24,7 +22,7 @@ function testGlob(title: string, glob: string, files: string[]) {
 }
 
 describe('Factory.FS.fileNames', () => {
-  testGlob('All files', '**/*.*', ['test.json', 'test.json', 'test.txt']);
+  testGlob('All files', '**/*.*', ['test.json', 'dir/test.json', 'test.txt']);
   testGlob('Direct children', '*.*', ['test.json', 'test.txt']);
-  testGlob('Custom filter', '**/*.json', ['test.json', 'test.json']);
+  testGlob('Custom filter', '**/*.json', ['test.json', 'dir/test.json']);
 });

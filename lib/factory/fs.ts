@@ -5,7 +5,15 @@ import * as globby from 'globby';
 import * as fs from 'fs';
 
 export default class FSFactory {
-  static fileNames(glob: string): Task {
-    return Task.fromPromise(globby(glob));
+  static relativePathContext: string = 'makhulu.rpath';
+
+  static glob(glob: string): Task {
+    return Task.fromPromise(globby(glob).then((names) => {
+      return names.map((n) => {
+        const state = new State(null, n);
+        state.context.setValue(FSFactory.relativePathContext, n);
+        return state;
+      });
+    }));
   }
 }

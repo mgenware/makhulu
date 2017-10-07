@@ -85,7 +85,6 @@ export default class Task {
   }
 
   checkPrevStates(states: any): State[] {
-    console.log(' ----- prevValues ', states);
     if (!states) {
       return [];
     }
