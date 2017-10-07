@@ -21,6 +21,8 @@ export default class Task {
 
   then(callback: (values: any[], states: State[]) => any) {
     this.promise = this.promise.then((prevValues: State[]) => {
+      this.checkPrevStates(prevValues);
+
       const ret = callback(prevValues.map(state => state.data), prevValues);
       if (ret === undefined) {
         return prevValues;
@@ -32,6 +34,8 @@ export default class Task {
 
   map(callback: (current: any, index: number, state: State) => any): Task {
     this.promise = this.promise.then((prevValues: State[]) => {
+      this.checkPrevStates(prevValues);
+
       this.reporter.printTitle(`➡️  map`);
       const promises = prevValues.map((element: State, index: number) => {
         const ret = callback(element.data, index, element);
@@ -50,6 +54,8 @@ export default class Task {
 
   filter(callback: (current: any, index: number, state: State) => boolean): Task {
     this.promise = this.promise.then((prevValues: State[]) => {
+      this.checkPrevStates(prevValues);
+
       this.reporter.printTitle(`✂️  filter`);
       const newValues = prevValues.filter((element, index) => {
         return callback(element.data, index, element);
@@ -66,6 +72,8 @@ export default class Task {
 
   print(): Task {
     this.promise = this.promise.then((prevValues: State[]) => {
+      this.checkPrevStates(prevValues);
+
       this.reporter.printTitle(`😀  print`);
       this.reporter.printInfo(`${prevValues.length} state(s)`);
       prevValues.forEach((value, index) => {
@@ -77,15 +85,23 @@ export default class Task {
   }
 
   checkPrevStates(states: any): State[] {
+    console.log(' ----- prevValues ', states);
     if (!states) {
       return [];
     }
     if (!Array.isArray(states)) {
       this.throwInvalidStates(states);
     }
+    const array: State[] = states;
+    if (array.length) {
+      if (!(array[0] instanceof State)) {
+        this.throwInvalidStates(states);
+      }
+    }
+    return [];
   }
 
   throwInvalidStates(value: any) {
-    throw new Error('The resolved value of Promise should be an array of State objects.' + value);
+    throw new Error(`The resolved value of Promise should be an array of State objects. It should not be "${value}"`);
   }
 }
