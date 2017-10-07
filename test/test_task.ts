@@ -27,11 +27,11 @@ describe('Task.map', () => {
     const task = createTask();
     const values: { [key: string]: boolean } = {};
     const indices: { [key: number]: boolean } = {};
-    task.map((value: any, index: number, state: ma.State) => {
+    task.map('', (value: any, index: number, state: ma.State) => {
       values[value] = true;
       indices[index] = true;
       assert.equal(state.data, value);
-    }).then(() => {
+    }).then('', () => {
       assert.deepEqual(values, arrayToMap(VALUES));
       done();
     });
@@ -41,9 +41,9 @@ describe('Task.map', () => {
     const task = createTask();
     const values: { [key: string]: boolean } = {};
     const indices: { [key: number]: boolean } = {};
-    task.map((value: number) => {
+    task.map('', (value: number) => {
       return value + 1;
-    }).then((values) => {
+    }).then('', (values) => {
       assert.deepEqual(values, VALUES.map(i => i + 1));
       done();
     });
@@ -55,12 +55,12 @@ describe('Task.filter', () => {
     const task = createTask();
     const values: { [key: string]: boolean } = {};
     const indices: { [key: number]: boolean } = {};
-    task.filter((value: any, index: number, state: ma.State) => {
+    task.filter('', (value: any, index: number, state: ma.State) => {
       values[value] = true;
       indices[index] = true;
       assert.equal(state.data, value);
       return true;
-    }).then(() => {
+    }).then('', () => {
       assert.deepEqual(values, arrayToMap(VALUES));
       done();
     });
@@ -70,9 +70,9 @@ describe('Task.filter', () => {
     const task = createTask();
     const values: { [key: string]: boolean } = {};
     const indices: { [key: number]: boolean } = {};
-    task.filter((value: number) => {
+    task.filter('', (value: number) => {
       return value < 0;
-    }).then((values) => {
+    }).then('', (values) => {
       assert.deepEqual(values, [-5]);
       done();
     });
@@ -82,18 +82,18 @@ describe('Task.filter', () => {
 describe('Task.then', () => {
   it('then should reflect task\'s values and states', (done) => {
     const task = createTask();
-    task.then((values, states) => {
+    task.then('', (values, states) => {
       assertStates(values, states, VALUES);
-    }).then(() => {
+    }).then('', () => {
       done();
     });
   });
   it('Return undefined', (done) => {
     const task = createTask();
     let currentValues: number[] = [];
-    task.then((values, states) => {
+    task.then('', (values, states) => {
       currentValues = values;
-    }).then((values) => {
+    }).then('', (values) => {
       assert.deepEqual(values, currentValues);
       done();
     });
@@ -101,9 +101,9 @@ describe('Task.then', () => {
   it('Return another set of states', (done) => {
     const task = createTask();
     const sampleValue = [4, 5, 6];
-    task.then((values, states) => {
+    task.then('', (values, states) => {
       return states.filter(s => s.data < 0);
-    }).then((values) => {
+    }).then('', (values) => {
       assert.deepEqual(values, [-5]);
       done();
     });

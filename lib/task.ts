@@ -27,7 +27,7 @@ export default class Task {
     return new Task(Promise.resolve(initialStates));
   }
 
-  then(callback: (values: any[], states: State[]) => any) {
+  then(description: string, callback: (values: any[], states: State[]) => any) {
     this.promise = this.promise.then((prevValues: State[]) => {
       this.checkPrevStates(prevValues);
 
@@ -40,11 +40,11 @@ export default class Task {
     return this;
   } 
 
-  map(callback: (current: any, index: number, state: State) => any): Task {
+  map(description: string, callback: (current: any, index: number, state: State) => any): Task {
     this.promise = this.promise.then((prevValues: State[]) => {
       this.checkPrevStates(prevValues);
 
-      this.reporter.printTitle(`➡️  map`);
+      this.reporter.printTitle(`➡️  map: ${description}`);
       const promises = prevValues.map((element: State, index: number) => {
         const ret = callback(element.data, index, element);
         return ret;
@@ -60,11 +60,11 @@ export default class Task {
     return this;
   }
 
-  filter(callback: (current: any, index: number, state: State) => boolean): Task {
+  filter(description: string, callback: (current: any, index: number, state: State) => boolean): Task {
     this.promise = this.promise.then((prevValues: State[]) => {
       this.checkPrevStates(prevValues);
 
-      this.reporter.printTitle(`✂️  filter`);
+      this.reporter.printTitle(`✂️  filter: ${description}`);
       const newValues = prevValues.filter((element, index) => {
         return callback(element.data, index, element);
       });
@@ -85,7 +85,7 @@ export default class Task {
       this.reporter.printTitle(`😀  print`);
       this.reporter.printInfo(`${prevValues.length} state(s)`);
       prevValues.forEach((value, index) => {
-        console.log(`${index} Value: ${value.data} Context: ${value.context.toString()}`);
+        console.log(`[${index}] Value: ${value.data} Context: ${value.context.toString()}`);
       });
       return prevValues;
     });
