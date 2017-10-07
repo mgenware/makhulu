@@ -28,6 +28,9 @@ export default class Task {
   }
 
   then(description: string, callback: (values: any[], states: State[]) => any) {
+    this.checkStringArgument('description', description);
+    this.checkFunctionArgument('callback', callback);
+
     this.promise = this.promise.then((prevValues: State[]) => {
       this.checkPrevStates(prevValues);
 
@@ -41,6 +44,9 @@ export default class Task {
   } 
 
   map(description: string, callback: (current: any, index: number, state: State) => any): Task {
+    this.checkStringArgument('description', description);
+    this.checkFunctionArgument('callback', callback);
+
     this.promise = this.promise.then((prevValues: State[]) => {
       this.checkPrevStates(prevValues);
 
@@ -61,6 +67,9 @@ export default class Task {
   }
 
   filter(description: string, callback: (current: any, index: number, state: State) => boolean): Task {
+    this.checkStringArgument('description', description);
+    this.checkFunctionArgument('callback', callback);
+
     this.promise = this.promise.then((prevValues: State[]) => {
       this.checkPrevStates(prevValues);
 
@@ -92,7 +101,7 @@ export default class Task {
     return this;
   }
 
-  checkPrevStates(states: any): State[] {
+  private checkPrevStates(states: any): State[] {
     if (!states) {
       return [];
     }
@@ -108,7 +117,19 @@ export default class Task {
     return [];
   }
 
-  throwInvalidStates(value: any) {
+  private throwInvalidStates(value: any) {
     throw new Error(`The resolved value of Promise should be an array of State objects. It should not be "${value}"`);
+  }
+  
+  private checkStringArgument(name: string, arg: any) {
+    if (typeof arg !== 'string') {
+      throw new Error(`The argument "${name}" should be a string`);
+    }
+  }
+
+  private checkFunctionArgument(name: string, arg: any) {
+    if (typeof arg !== 'function') {
+      throw new Error(`The argument "${name}" should be a function`);
+    }
   }
 }
