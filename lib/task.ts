@@ -43,7 +43,7 @@ export default class Task {
     return this;
   } 
 
-  map(description: string, callback: (current: any, index: number, state: State) => any): Task {
+  map(description: string, callback: (current: any, state: State, index: number) => any): Task {
     this.checkStringArgument('description', description);
     this.checkFunctionArgument('callback', callback);
 
@@ -52,7 +52,7 @@ export default class Task {
 
       this.reporter.printTitle(`➡️  map: ${description}`);
       const promises = prevValues.map((element: State, index: number) => {
-        const ret = callback(element.data, index, element);
+        const ret = callback(element.data, element, index);
         return ret;
       });
       let waitPromise = Promise.all(promises).then((values: any[]) => {
@@ -66,7 +66,7 @@ export default class Task {
     return this;
   }
 
-  filter(description: string, callback: (current: any, index: number, state: State) => boolean): Task {
+  filter(description: string, callback: (current: any, state: State, index: number) => boolean): Task {
     this.checkStringArgument('description', description);
     this.checkFunctionArgument('callback', callback);
 
@@ -75,7 +75,7 @@ export default class Task {
 
       this.reporter.printTitle(`✂️  filter: ${description}`);
       const newValues = prevValues.filter((element, index) => {
-        return callback(element.data, index, element);
+        return callback(element.data, element, index);
       });
       if (newValues.length == prevValues.length) {
         this.reporter.printInfo(`${prevValues.length} state(s)`);

@@ -27,7 +27,7 @@ describe('Task.map', () => {
     const task = createTask();
     const values: { [key: string]: boolean } = {};
     const indices: { [key: number]: boolean } = {};
-    task.map('', (value: any, index: number, state: ma.State) => {
+    task.map('', (value: any, state: ma.State, index: number) => {
       values[value] = true;
       indices[index] = true;
       assert.equal(state.data, value);
@@ -55,7 +55,7 @@ describe('Task.filter', () => {
     const task = createTask();
     const values: { [key: string]: boolean } = {};
     const indices: { [key: number]: boolean } = {};
-    task.filter('', (value: any, index: number, state: ma.State) => {
+    task.filter('', (value: any, state: ma.State, index: number) => {
       values[value] = true;
       indices[index] = true;
       assert.equal(state.data, value);
