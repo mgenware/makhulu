@@ -5,3 +5,9 @@ export { default as js } from './factory/js';
 export { default as fs } from './factory/fs';
 export { default as State } from './state';
 export { default as Task } from './task';
+
+
+process.on('unhandledRejection', err => {
+  console.log("Caught unhandledRejection");
+  console.log(err);
+});
