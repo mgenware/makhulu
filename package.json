@@ -2,7 +2,7 @@
   "name": "makhulu",
   "version": "0.0.1",
   "description": "A smart task runner",
-  "main": "dist/main.js",
+  "main": "dist/lib/main.js",
   "author": "Mgen (https://www.mgenware.com)",
   "homepage": "https://github.com/mgenware/makhulu",
   "bugs": "https://github.com/mgenware/makhulu/issues",

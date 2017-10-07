@@ -1,14 +1,17 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "noImplicitAny": true,
         "removeComments": true,
         "preserveConstEnums": true,
         "sourceMap": true,
         "baseUrl": "lib",
         "target": "ES5",
-        "noImplicitThis": true,
-        "outDir": "dist"
+        "outDir": "dist",
+        "declaration": true,
+        "strict": true,
+        "lib": [
+            "es5", "es6"
+        ]
     },
     "include": [
         "lib/**/*",
