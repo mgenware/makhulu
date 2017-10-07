@@ -5,10 +5,18 @@ import EmptyReporter from './reporters/emptyReporter';
 const Promise = require('bluebird') as any;
 
 export default class Task {
-  reporter: IReporter;
+  private reporter: IReporter;
   
   private constructor(public promise: any) {
     this.reporter = new DefaultReporter();
+  }
+
+  setReporter(rep: IReporter|null) {
+    if (rep) {
+      this.reporter = rep;
+    } else {
+      this.reporter = new EmptyReporter;
+    }
   }
 
   static fromPromise(promise: any) {

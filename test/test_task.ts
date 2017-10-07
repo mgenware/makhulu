@@ -4,6 +4,7 @@ const VALUES = [1, 4, 7, 2, -5];
 
 function createTask() {
   const task = ma.js.array(VALUES);
+  task.setReporter(null);
   return task;
 }
 function arrayToMap(array: number[]): { [key: number]: boolean } {

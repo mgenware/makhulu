@@ -14,6 +14,7 @@ function testGlob(title: string, glob: string, files: string[]) {
   it(title, (done) => {
     const expFiles = files.map(f => path.join('dist/test/data', f));
     const task = ma.fs.glob('dist/test/data/' + glob);
+    task.setReporter(null);
     task.then((values) => {
       assert.deepEqual(arrayToMap(values), arrayToMap(expFiles));
       done();
