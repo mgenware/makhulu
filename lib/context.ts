@@ -1,6 +1,6 @@
 export default class Context {
-  private map: { [key: string] : any; } = {};
-  
+  private map: { [key: string]: any; } = {};
+
   getValue(key: string): any {
     return this.map[key];
   }

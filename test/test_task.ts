@@ -9,7 +9,7 @@ function createTask() {
 }
 function arrayToMap(array: number[]): { [key: number]: boolean } {
   const map: { [key: number]: boolean } = {};
-  for (let n of array) {
+  for (const n of array) {
     map[n] = true;
   }
   return map;
@@ -31,9 +31,11 @@ describe('Task.map', () => {
       values[value] = true;
       indices[index] = true;
       assert.equal(state.data, value);
-    }).then('', () => {
+      return value;
+    }).then('', (data) => {
       assert.deepEqual(values, arrayToMap(VALUES));
       done();
+      return data;
     });
   });
 
@@ -43,9 +45,10 @@ describe('Task.map', () => {
     const indices: { [key: number]: boolean } = {};
     task.map('', (value: number) => {
       return value + 1;
-    }).then('', (values) => {
-      assert.deepEqual(values, VALUES.map(i => i + 1));
+    }).then('', (prev) => {
+      assert.deepEqual(values, VALUES.map((i) => i + 1));
       done();
+      return prev;
     });
   });
 });
@@ -63,6 +66,7 @@ describe('Task.filter', () => {
     }).then('', () => {
       assert.deepEqual(values, arrayToMap(VALUES));
       done();
+      return values;
     });
   });
 
@@ -72,9 +76,10 @@ describe('Task.filter', () => {
     const indices: { [key: number]: boolean } = {};
     task.filter('', (value: number) => {
       return value < 0;
-    }).then('', (values) => {
+    }).then('', (prev) => {
       assert.deepEqual(values, [-5]);
       done();
+      return prev;
     });
   });
 });
@@ -84,8 +89,10 @@ describe('Task.then', () => {
     const task = createTask();
     task.then('', (values, states) => {
       assertStates(values, states, VALUES);
-    }).then('', () => {
+      return values;
+    }).then('', (values) => {
       done();
+      return values;
     });
   });
   it('Return undefined', (done) => {
@@ -93,19 +100,22 @@ describe('Task.then', () => {
     let currentValues: number[] = [];
     task.then('', (values, states) => {
       currentValues = values;
+      return values;
     }).then('', (values) => {
       assert.deepEqual(values, currentValues);
       done();
+      return values;
     });
   });
   it('Return another set of states', (done) => {
     const task = createTask();
     const sampleValue = [4, 5, 6];
     task.then('', (values, states) => {
-      return states.filter(s => s.data < 0);
+      return states.filter((s) => s.data < 0);
     }).then('', (values) => {
       assert.deepEqual(values, [-5]);
       done();
+      return values;
     });
   });
 });

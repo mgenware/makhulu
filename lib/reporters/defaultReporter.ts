@@ -10,15 +10,15 @@ export default class DefaultReporter {
   }
 
   print(s: string): void {
-    console.log(s);
+    this.out(s);
   }
 
   printTitle(s: string): void {
-    console.log(`===== ${s} =====`);
+    this.out(`===== ${s} =====`);
   }
 
   printInfo(s: string): void {
-    console.log(chalk.dim(s));
+    this.out(chalk.dim(s));
   }
 
   startProgress(max: number): void {
@@ -31,5 +31,10 @@ export default class DefaultReporter {
 
   stopProgress(): void {
     this.progbar.stop();
+  }
+
+  /* tslint:disable:no-console */
+  out(s: string) {
+    console.log(s);
   }
 }

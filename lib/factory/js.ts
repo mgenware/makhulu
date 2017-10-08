@@ -1,6 +1,6 @@
 import Context from '../context';
-import Task from '../task';
 import State from '../state';
+import Task from '../task';
 
 export default class JSFactory {
   // construct a Task from a JavaScript array
@@ -9,7 +9,7 @@ export default class JSFactory {
       throw new Error('array cannot be null');
     }
 
-    const states = array.map(n => new State(null, n));
+    const states = array.map((n) => new State(null, n));
     return Task.fromInitialStates(states);
   }
 }

@@ -9,6 +9,7 @@ describe('Factory.JS', () => {
     task.then('', (values) => {
       assert.deepEqual(values, array);
       done();
+      return values;
     });
   });
-})
+});

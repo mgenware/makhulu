@@ -8,4 +8,4 @@ describe('require this module', () => {
       assert.notEqual(task.reporter, null);
     });
   });
-});  
+});

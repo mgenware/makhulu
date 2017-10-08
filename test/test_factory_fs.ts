@@ -1,10 +1,10 @@
-import * as ma from '../lib/main';
 import * as assert from 'assert';
 import * as path from 'path';
+import * as ma from '../lib/main';
 
 function arrayToMap(array: string[]): { [key: number]: boolean } {
   const map: { [key: string]: boolean } = {};
-  for (let n of array) {
+  for (const n of array) {
     map[n] = true;
   }
   return map;
@@ -12,12 +12,13 @@ function arrayToMap(array: string[]): { [key: number]: boolean } {
 
 function testGlob(title: string, glob: string, files: string[]) {
   it(title, (done) => {
-    const expFiles = files.map(f => path.join('dist/test/data', f));
+    const expFiles = files.map((f) => path.join('dist/test/data', f));
     const task = ma.fs.glob('dist/test/data/' + glob);
     task.setReporter(null);
     task.then('', (values) => {
       assert.deepEqual(arrayToMap(values), arrayToMap(expFiles));
       done();
+      return values;
     });
   });
 }

@@ -1,7 +1,7 @@
+/* tslint:disable:no-empty */
 // A reporter that just ignores all messages
 export default class EmptyReporter {
-  constructor() {
-  }
+  constructor() { }
 
   print(s: string): void {
   }

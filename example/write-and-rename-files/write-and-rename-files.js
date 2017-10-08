@@ -12,10 +12,10 @@ mkl.fs.glob('./src/**/*.md')
 .map('Read files', (file) => {
   return fs.readFileAsync(file);
 }).map('Markdown to HTML', (content) => {
-  return md.render(content);
+  return md.render(content.toString());
 }).filter('Save to disk', (html, state) => {
-  const srcFile = mkl.fs.getRelativePathFromContext(state);
-  const destFile = path.join(DEST, rename((pathObj) => {
+  const srcFile = mkl.fs.getRelativePathFromContext(state.context);
+  const destFile = path.join(DEST, rename(srcFile, (pathObj) => {
     pathObj.ext = '.md';
   }));
 

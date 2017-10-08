@@ -5,8 +5,17 @@ import EmptyReporter from './reporters/emptyReporter';
 const Promise = require('bluebird') as any;
 
 export default class Task {
+  static fromPromise(promise: any) {
+    return new Task(promise);
+  }
+
+  static fromInitialStates(initialStates: State[]) {
+    return new Task(Promise.resolve(initialStates));
+  }
+
+  /* instance members */
   private reporter: IReporter;
-  
+
   private constructor(public promise: any) {
     this.reporter = new DefaultReporter();
   }
@@ -15,16 +24,8 @@ export default class Task {
     if (rep) {
       this.reporter = rep;
     } else {
-      this.reporter = new EmptyReporter;
+      this.reporter = new EmptyReporter();
     }
-  }
-
-  static fromPromise(promise: any) {
-    return new Task(promise);
-  }
-
-  static fromInitialStates(initialStates: State[]) {
-    return new Task(Promise.resolve(initialStates));
   }
 
   then(description: string, callback: (values: any[], states: State[]) => any) {
@@ -34,14 +35,14 @@ export default class Task {
     this.promise = this.promise.then((prevValues: State[]) => {
       this.checkPrevStates(prevValues);
 
-      const ret = callback(prevValues.map(state => state.data), prevValues);
+      const ret = callback(prevValues.map((state) => state.data), prevValues);
       if (ret === undefined) {
-        return prevValues;
+        this.throwReturnUndefined('then');
       }
       return ret;
     });
     return this;
-  } 
+  }
 
   map(description: string, callback: (current: any, state: State, index: number) => any): Task {
     this.checkStringArgument('description', description);
@@ -53,9 +54,12 @@ export default class Task {
       this.reporter.printTitle(`➡️  map: ${description}`);
       const promises = prevValues.map((element: State, index: number) => {
         const ret = callback(element.data, element, index);
+        if (ret === undefined) {
+          this.throwReturnUndefined('map');
+        }
         return ret;
       });
-      let waitPromise = Promise.all(promises).then((values: any[]) => {
+      const waitPromise = Promise.all(promises).then((values: any[]) => {
         return values.map((item, index) => {
           return new State(prevValues[index].context, item);
         });
@@ -75,9 +79,16 @@ export default class Task {
 
       this.reporter.printTitle(`✂️  filter: ${description}`);
       const newValues = prevValues.filter((element, index) => {
-        return callback(element.data, element, index);
+        const ret = callback(element.data, element, index);
+        if (ret === undefined) {
+          this.throwReturnUndefined('filter');
+        }
+        if (typeof ret !== 'boolean') {
+          throw new Error(`"filter" must return a value of type boolean`);
+        }
+        return ret;
       });
-      if (newValues.length == prevValues.length) {
+      if (newValues.length === prevValues.length) {
         this.reporter.printInfo(`${prevValues.length} state(s)`);
       } else {
         this.reporter.printInfo(`${prevValues.length} -> ${newValues.length} state(s)`);
@@ -94,6 +105,7 @@ export default class Task {
       this.reporter.printTitle(`😀  print`);
       this.reporter.printInfo(`${prevValues.length} state(s)`);
       prevValues.forEach((value, index) => {
+        /* tslint:disable-next-line:no-console */
         console.log(`[${index}] Value: ${value.data} Context: ${value.context.toString()}`);
       });
       return prevValues;
@@ -120,7 +132,7 @@ export default class Task {
   private throwInvalidStates(value: any) {
     throw new Error(`The resolved value of Promise should be an array of State objects. It should not be "${value}"`);
   }
-  
+
   private checkStringArgument(name: string, arg: any) {
     if (typeof arg !== 'string') {
       throw new Error(`The argument "${name}" should be a string`);
@@ -131,5 +143,9 @@ export default class Task {
     if (typeof arg !== 'function') {
       throw new Error(`The argument "${name}" should be a function`);
     }
+  }
+
+  private throwReturnUndefined(funcName: string) {
+    throw new Error(`"${funcName}" returns undefined(did you forget to add a return statement?)`);
   }
 }

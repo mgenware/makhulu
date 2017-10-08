@@ -1,11 +1,11 @@
-import Context from '../context';
-import Task from '../task';
-import State from '../state';
-import * as globby from 'globby';
 import * as fs from 'fs';
+import * as globby from 'globby';
+import Context from '../context';
+import State from '../state';
+import Task from '../task';
 
 export default class FSFactory {
-  // ck stands for Context Key. 
+  // ck stands for Context Key.
   static ckRelativePath: string = 'makhulu.rpath';
 
   static glob(glob: string): Task {
@@ -21,5 +21,4 @@ export default class FSFactory {
   static getRelativePathFromContext(context: Context) {
     return context.getValue(FSFactory.ckRelativePath);
   }
-  
 }
