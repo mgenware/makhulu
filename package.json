@@ -19,15 +19,17 @@
     "@types/mocha": "^2.2.43",
     "@types/node": "^8.0.29",
     "mocha": "*",
-    "typescript": "^2.5.2"
+    "tslint": "^5.7.0",
+    "typescript": "^2.5.3"
   },
   "scripts": {
-    "test": "yarn run compile && yarn run copy && mocha \"dist/test/*.js\"",
+    "test": "yarn run compile && yarn run lint && yarn run copy && mocha \"dist/test/*.js\"",
     "dev_test": "mocha \"dist/test/*.js\"",
     "build": "tsc && yarn test",
     "compile": "tsc",
     "dev": "tsc -w",
-    "copy": "copyfiles \"test/data/**/*.*\" \"dist\""
+    "copy": "copyfiles \"test/data/**/*.*\" \"dist\"",
+    "lint": "tslint -p ."
   },
   "engines": {
     "node": ">=6.0.0"
