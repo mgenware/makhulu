@@ -55,34 +55,34 @@ describe('Task.map', () => {
   });
 });
 
-// describe('Task.filter', () => {
-//   it('filter should iterate through all current values', (done) => {
-//     const task = createTask();
-//     const values: { [key: string]: boolean } = {};
-//     const indices: { [key: number]: boolean } = {};
-//     task.filter('', (value: any, state: ma.State, index: number) => {
-//       values[value] = true;
-//       indices[index] = true;
-//       assert.equal(state.data, value);
-//       return true;
-//     }).then('', () => {
-//       assert.deepEqual(values, arrayToMap(VALUES));
-//       done();
-//     });
-//   });
+describe('Task.filter', () => {
+  it('filter should iterate through all current values', (done) => {
+    const task = createTask();
+    const valuesMap: { [key: string]: boolean } = {};
+    const indicesMap: { [key: number]: boolean } = {};
+    task.filter('', (value: any, state: ma.State, index: number) => {
+      valuesMap[value] = true;
+      indicesMap[index] = true;
 
-//   it('Check return values of filter', (done) => {
-//     const task = createTask();
-//     const values: { [key: string]: boolean } = {};
-//     const indices: { [key: number]: boolean } = {};
-//     task.filter('', (value: number) => {
-//       return value < 0;
-//     }).then('', (prev) => {
-//       assert.deepEqual(values, [-5]);
-//       done();
-//     });
-//   });
-// });
+      assert.equal(state.data, value);
+      return true;
+    }).then('', () => {
+      assert.deepEqual(valuesMap, VALUES_MAP);
+      assert.deepEqual(indicesMap, INDICES_MAP);
+      done();
+    });
+  });
+
+  it('Check return values of filter', (done) => {
+    const task = createTask();
+    task.filter('', (value: number) => {
+      return value < 0;
+    }).then('', (states) => {
+      assert.deepEqual(states.map((s) => s.data), [-5]);
+      done();
+    });
+  });
+});
 
 describe('Task.then', () => {
   it('then should reflect task\'s values and states', (done) => {
