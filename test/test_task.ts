@@ -1,6 +1,7 @@
 import * as ma from '../lib/main';
 import * as assert from 'assert';
 const VALUES = [1, 4, 7, 2, -5];
+const INDICES = [0, 1, 2, 3, 4];
 
 function createTask() {
   const task = ma.js.array(VALUES);
@@ -22,100 +23,91 @@ function assertStates(values: any, states: ma.State[], expectedValues: any[]) {
   }
 }
 
+const VALUES_MAP = arrayToMap(VALUES);
+const INDICES_MAP = arrayToMap(INDICES);
+
 describe('Task.map', () => {
   it('map should iterate through all current values', (done) => {
     const task = createTask();
-    const values: { [key: string]: boolean } = {};
-    const indices: { [key: number]: boolean } = {};
+    const valuesMap: { [key: string]: boolean } = {};
+    const indicesMap: { [key: number]: boolean } = {};
     task.map('', (value: any, state: ma.State, index: number) => {
-      values[value] = true;
-      indices[index] = true;
+      valuesMap[value] = true;
+      indicesMap[index] = true;
+
       assert.equal(state.data, value);
       return value;
-    }).then('', (data) => {
-      assert.deepEqual(values, arrayToMap(VALUES));
+    }).then('', () => {
+      assert.deepEqual(valuesMap, VALUES_MAP);
+      assert.deepEqual(indicesMap, INDICES_MAP);
       done();
-      return data;
     });
   });
 
   it('Check return values of map', (done) => {
     const task = createTask();
-    const values: { [key: string]: boolean } = {};
-    const indices: { [key: number]: boolean } = {};
     task.map('', (value: number) => {
       return value + 1;
-    }).then('', (prev) => {
-      assert.deepEqual(values, VALUES.map((i) => i + 1));
+    }).then('', (states) => {
+      assert.deepEqual(states.map((s) => s.data), VALUES.map((i) => i + 1));
       done();
-      return prev;
     });
   });
 });
 
-describe('Task.filter', () => {
-  it('filter should iterate through all current values', (done) => {
-    const task = createTask();
-    const values: { [key: string]: boolean } = {};
-    const indices: { [key: number]: boolean } = {};
-    task.filter('', (value: any, state: ma.State, index: number) => {
-      values[value] = true;
-      indices[index] = true;
-      assert.equal(state.data, value);
-      return true;
-    }).then('', () => {
-      assert.deepEqual(values, arrayToMap(VALUES));
-      done();
-      return values;
-    });
-  });
+// describe('Task.filter', () => {
+//   it('filter should iterate through all current values', (done) => {
+//     const task = createTask();
+//     const values: { [key: string]: boolean } = {};
+//     const indices: { [key: number]: boolean } = {};
+//     task.filter('', (value: any, state: ma.State, index: number) => {
+//       values[value] = true;
+//       indices[index] = true;
+//       assert.equal(state.data, value);
+//       return true;
+//     }).then('', () => {
+//       assert.deepEqual(values, arrayToMap(VALUES));
+//       done();
+//     });
+//   });
 
-  it('Check return values of filter', (done) => {
-    const task = createTask();
-    const values: { [key: string]: boolean } = {};
-    const indices: { [key: number]: boolean } = {};
-    task.filter('', (value: number) => {
-      return value < 0;
-    }).then('', (prev) => {
-      assert.deepEqual(values, [-5]);
-      done();
-      return prev;
-    });
-  });
-});
+//   it('Check return values of filter', (done) => {
+//     const task = createTask();
+//     const values: { [key: string]: boolean } = {};
+//     const indices: { [key: number]: boolean } = {};
+//     task.filter('', (value: number) => {
+//       return value < 0;
+//     }).then('', (prev) => {
+//       assert.deepEqual(values, [-5]);
+//       done();
+//     });
+//   });
+// });
 
 describe('Task.then', () => {
   it('then should reflect task\'s values and states', (done) => {
     const task = createTask();
-    task.then('', (values, states) => {
-      assertStates(values, states, VALUES);
-      return values;
-    }).then('', (values) => {
+    task.then('', (states) => {
+      assertStates(states.map((s) => s.data), states, VALUES);
+    }).then('', () => {
       done();
-      return values;
     });
   });
   it('Return undefined', (done) => {
     const task = createTask();
-    let currentValues: number[] = [];
-    task.then('', (values, states) => {
-      currentValues = values;
-      return values;
-    }).then('', (values) => {
-      assert.deepEqual(values, currentValues);
+    // tslint:disable-next-line: no-empty
+    task.then('', () => { }).then('', (states) => {
+      assertStates(states.map((s) => s.data), states, VALUES);
       done();
-      return values;
     });
   });
   it('Return another set of states', (done) => {
     const task = createTask();
-    const sampleValue = [4, 5, 6];
-    task.then('', (values, states) => {
+    task.then('', (states) => {
       return states.filter((s) => s.data < 0);
-    }).then('', (values) => {
-      assert.deepEqual(values, [-5]);
+    }).then('', (states) => {
+      assert.deepEqual(states.map((s) => s.data), [-5]);
       done();
-      return values;
     });
   });
 });

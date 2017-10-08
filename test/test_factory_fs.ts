@@ -15,10 +15,10 @@ function testGlob(title: string, glob: string, files: string[]) {
     const expFiles = files.map((f) => path.join('dist/test/data', f));
     const task = ma.fs.glob('dist/test/data/' + glob);
     task.setReporter(null);
-    task.then('', (values) => {
+    task.then('', (states) => {
+      const values = states.map((s) => s.data);
       assert.deepEqual(arrayToMap(values), arrayToMap(expFiles));
       done();
-      return values;
     });
   });
 }

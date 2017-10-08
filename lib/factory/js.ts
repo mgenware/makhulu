@@ -1,4 +1,3 @@
-import Context from '../context';
 import State from '../state';
 import Task from '../task';
 

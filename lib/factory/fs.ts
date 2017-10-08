@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as globby from 'globby';
 import Context from '../context';
 import State from '../state';

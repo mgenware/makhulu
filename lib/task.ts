@@ -28,16 +28,20 @@ export default class Task {
     }
   }
 
-  then(description: string, callback: (values: any[], states: State[]) => any) {
+  then(description: string, callback: (states: State[]) => any) {
     this.checkStringArgument('description', description);
     this.checkFunctionArgument('callback', callback);
 
     this.promise = this.promise.then((prevValues: State[]) => {
       this.checkPrevStates(prevValues);
 
-      const ret = callback(prevValues.map((state) => state.data), prevValues);
+      const ret = callback(prevValues);
       if (ret === undefined) {
-        this.throwReturnUndefined('then');
+        return prevValues;
+      }
+      if (!this.isArrayOfStates(ret)) {
+        // tslint:disable-next-line: max-line-length
+        throw new Error('"then" must return an array of State objects, or you can return undefined to leave everything unchanged');
       }
       return ret;
     });
@@ -113,20 +117,20 @@ export default class Task {
     return this;
   }
 
-  private checkPrevStates(states: any): State[] {
-    if (!states) {
-      return [];
-    }
+  private isArrayOfStates(states: any) {
     if (!Array.isArray(states)) {
+      return false;
+    }
+    if (states.length) {
+      return states[0] instanceof State;
+    }
+    return true;
+  }
+
+  private checkPrevStates(states: any) {
+    if (!this.isArrayOfStates(states)) {
       this.throwInvalidStates(states);
     }
-    const array: State[] = states;
-    if (array.length) {
-      if (!(array[0] instanceof State)) {
-        this.throwInvalidStates(states);
-      }
-    }
-    return [];
   }
 
   private throwInvalidStates(value: any) {
