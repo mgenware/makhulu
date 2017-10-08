@@ -2,6 +2,10 @@ import * as globby from 'globby';
 import Context from '../context';
 import State from '../state';
 import Task from '../task';
+import * as fs from 'fs';
+const writeFile = require('write') as any;
+const Promise = require('bluebird') as any;
+const nodeReadFileAsync = Promise.promisify(fs.readFile);
 
 export default class FSFactory {
   // ck stands for Context Key.
@@ -19,5 +23,13 @@ export default class FSFactory {
 
   static getRelativePathFromContext(context: Context) {
     return context.getValue(FSFactory.ckRelativePath);
+  }
+
+  static readFileAsync(...args: any[]): any {
+    return nodeReadFileAsync(...args);
+  }
+
+  static writeFileAsync(...args: any[]): any {
+    return writeFile(...args);
   }
 }

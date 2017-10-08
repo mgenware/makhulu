@@ -41,6 +41,7 @@
     "copyfiles": "^1.2.0",
     "fast-glob": "^1.0.1",
     "fs-syncx": "^0.0.4",
-    "globby": "^6.1.0"
+    "globby": "^6.1.0",
+    "write": "^1.0.3"
   }
 }
