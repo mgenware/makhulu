@@ -1,15 +1,15 @@
-const ma = require('../..');
+const mkl = require('../..');
 const Promise = require('bluebird');
-const readFileAsync = Promise.promisify(require("fs").readFile);
 
-ma.fs.glob('./data/**/*.json')
+mkl.fs.glob('./data/**/*.json')
 .map('Read files', (file) => {
-  return readFileAsync(file);
+  return mkl.fs.readFileAsync(file);
 }).map('Parse JSON', (content) => {
   return JSON.parse(content);
-}).filter('Filter objects', (obj) => {
-  return obj.gender == 'male' && obj.age >= 18;
-}).map('Map names', (obj) => obj.name).then('Print names', (names) => {
+}).filter('Filter objects', (person) => {
+  return person.gender == 'male' && person.age >= 18;
+}).map('Map names', (person) => person.name).then('Print names', (states) => {
+  const names = states.map((s) => s.data);
   console.log(`Males over 18: ${names}`);
 });
 console.log('Task started');

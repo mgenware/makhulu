@@ -1,4 +1,4 @@
-const ma = require('../..');
+const mkl = require('../..');
 
 // creates a promise that will be resolved after given delay
 function makePromise(name, delay) {
@@ -11,7 +11,7 @@ function makePromise(name, delay) {
   });
 }
 
-ma.js.array([2000, 200, 2])
+mkl.js.array([2000, 200, 2])
 .map('Create an array of Promises', (n, index, state) => {
   return makePromise(n, n);
 })
