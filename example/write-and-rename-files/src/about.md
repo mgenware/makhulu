@@ -1,6 +1,4 @@
 # about
-**About** page.
-
 ```javascript
-console.log('Hello world');
+console.log('About me');
 ```

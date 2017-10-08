@@ -1,6 +1,6 @@
 {
   "name": "makhulu",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A smart task runner",
   "main": "dist/lib/main.js",
   "author": "Mgen (https://www.mgenware.com)",

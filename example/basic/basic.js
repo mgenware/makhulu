@@ -12,16 +12,16 @@ function makePromise(name, delay) {
 }
 
 mkl.js.array([2000, 200, 2])
-.map('Create an array of Promises', (n, index, state) => {
-  return makePromise(n, n);
-})
-.print()
-.map('Add return values by 1', (n, index, state) => {
-  return n-1;
-})
-.print()
-.filter('Filter out all return values less than 1000', (n, index, state) => {
-  return n < 1000;
-})
-.print();
+  .map('Create an array of Promises', (value) => {
+    return makePromise(value, value);
+  })
+  .print()
+  .map('Add return values by 1', (value) => {
+    return value - 1;
+  })
+  .print()
+  .filter('Filter out all return values less than 1000', (value) => {
+    return value < 1000;
+  })
+  .print();
 console.log('Task started');
