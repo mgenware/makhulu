@@ -3,19 +3,19 @@
 export default class EmptyReporter {
   constructor() { }
 
-  print(s: string): void {
+  print(_: string): void {
   }
 
-  printTitle(s: string): void {
+  printTitle(_: string): void {
   }
 
-  printInfo(s: string): void {
+  printInfo(_: string): void {
   }
 
-  startProgress(max: number): void {
+  startProgress(_: number): void {
   }
 
-  incrementProgress(value: number): void {
+  incrementProgress(_: number): void {
   }
 
   stopProgress(): void {
