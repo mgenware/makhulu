@@ -13,7 +13,8 @@
             false
         ],
         "no-var-requires": false,
-        "ordered-imports": false
+        "ordered-imports": false,
+        "max-classes-per-file": false
     },
     "rulesDirectory": []
 }
