@@ -28,7 +28,7 @@ export default class Task {
     }
   }
 
-  then(description: string, callback: (states: State[]) => any) {
+  then(description: string, callback: (states: State[]) => any): Task {
     this.checkStringArgument('description', description);
     this.checkFunctionArgument('callback', callback);
 
