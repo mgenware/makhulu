@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "description": "A smart task runner",
   "main": "dist/lib/main.js",
+  "types": "dist/lib/main.d.ts",
   "author": "Mgen (https://www.mgenware.com)",
   "homepage": "https://github.com/mgenware/makhulu",
   "bugs": "https://github.com/mgenware/makhulu/issues",
@@ -29,6 +30,7 @@
     "build": "tsc && yarn test",
     "compile": "tsc",
     "dev": "tsc -w",
+    "prepublish": "yarn run test",
     "copy": "copyfiles \"test/data/**/*.*\" \"dist\"",
     "lint": "tslint -p ."
   },
