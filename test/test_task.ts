@@ -1,10 +1,10 @@
-import * as ma from '../lib/main';
+import * as mkl from '../lib/main';
 import * as assert from 'assert';
 const VALUES = [1, 4, 7, 2, -5];
 const INDICES = [0, 1, 2, 3, 4];
 
-function createTask() {
-  const task = ma.js.array(VALUES);
+function createTask(): mkl.Task {
+  const task = new mkl.Task();
   task.setReporter(null);
   return task;
 }
@@ -31,7 +31,7 @@ describe('Task.map', () => {
     const task = createTask();
     const valuesMap: { [key: string]: boolean } = {};
     const indicesMap: { [key: number]: boolean } = {};
-    task.map('', (value: any, state: ma.State, index: number) => {
+    task.map('', (value: any, state: mkl.State, index: number) => {
       valuesMap[value] = true;
       indicesMap[index] = true;
 
@@ -42,6 +42,7 @@ describe('Task.map', () => {
       assert.deepEqual(indicesMap, INDICES_MAP);
       done();
     });
+    task.runWithStates(mkl.js.array(VALUES));
   });
 
   it('Check return values of map', (done) => {
@@ -52,6 +53,7 @@ describe('Task.map', () => {
       assert.deepEqual(states.map((s) => s.data), VALUES.map((i) => i + 1));
       done();
     });
+    task.runWithStates(mkl.js.array(VALUES));
   });
 });
 
@@ -71,6 +73,7 @@ describe('Task.filter', () => {
       assert.deepEqual(indicesMap, INDICES_MAP);
       done();
     });
+    task.runWithStates(mkl.js.array(VALUES));
   });
 
   it('Check return values of filter', (done) => {
@@ -81,6 +84,7 @@ describe('Task.filter', () => {
       assert.deepEqual(states.map((s) => s.data), [-5]);
       done();
     });
+    task.runWithStates(mkl.js.array(VALUES));
   });
 });
 
@@ -92,6 +96,7 @@ describe('Task.then', () => {
     }).then('', () => {
       done();
     });
+    task.runWithStates(mkl.js.array(VALUES));
   });
   it('Return undefined', (done) => {
     const task = createTask();
@@ -100,6 +105,7 @@ describe('Task.then', () => {
       assertStates(states.map((s) => s.data), states, VALUES);
       done();
     });
+    task.runWithStates(mkl.js.array(VALUES));
   });
   it('Return another set of states', (done) => {
     const task = createTask();
@@ -109,5 +115,6 @@ describe('Task.then', () => {
       assert.deepEqual(states.map((s) => s.data), [-5]);
       done();
     });
+    task.runWithStates(mkl.js.array(VALUES));
   });
 });

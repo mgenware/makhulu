@@ -18,6 +18,8 @@ class Operation {
 export default class TaskFactory {
   private operations: Operation[] = [];
 
+  constructor() { }
+
   then(description: string, callback: (states: State[]) => any): TaskFactory {
     this.addOperation(new Operation(OperationType.Then, [description, callback]));
     return this;
