@@ -1,11 +1,10 @@
 import Task from './task';
-import State from './state';
 import IReporter from './reporter';
 
 enum OperationType {
   Then = 1,
-  Map,
-  Filter,
+  MapSync,
+  FilterSync,
   Print,
   SetReporter,
 }
@@ -20,18 +19,18 @@ export default class TaskFactory {
 
   constructor() { }
 
-  then(description: string, callback: (states: State[]) => any): TaskFactory {
+  then(description: string, callback: (array: any[]) => any[]): TaskFactory {
     this.addOperation(new Operation(OperationType.Then, [description, callback]));
     return this;
   }
 
-  map(description: string, callback: (current: any, state: State, index: number) => any): TaskFactory {
-    this.addOperation(new Operation(OperationType.Map, [description, callback]));
+  mapSync(description: string, callback: (data: any, index: number) => any): TaskFactory {
+    this.addOperation(new Operation(OperationType.MapSync, [description, callback]));
     return this;
   }
 
-  filter(description: string, callback: (current: any, state: State, index: number) => boolean): TaskFactory {
-    this.addOperation(new Operation(OperationType.Filter, [description, callback]));
+  filterSync(description: string, callback: (data: any, index: number) => boolean): TaskFactory {
+    this.addOperation(new Operation(OperationType.FilterSync, [description, callback]));
     return this;
   }
 
@@ -40,12 +39,12 @@ export default class TaskFactory {
     return this;
   }
 
-  runWithStates(states: State[]) {
-    this.startWithTask(Task.fromInitialStates(states));
+  runWithPromise(promise: Promise<any[]>) {
+    this.startWithTask(Task.fromPromise(promise));
   }
 
-  runWithPromise(promise: Promise<any>) {
-    this.startWithTask(Task.fromPromise(promise));
+  runWithArray(array: any[]) {
+    this.startWithTask(Task.fromArray(array));
   }
 
   setReporter(rep: IReporter|null) {
@@ -59,12 +58,12 @@ export default class TaskFactory {
         task.then(op.args[0], op.args[1]);
         break;
 
-        case OperationType.Map:
-        task.map(op.args[0], op.args[1]);
+        case OperationType.MapSync:
+        task.mapSync(op.args[0], op.args[1]);
         break;
 
-        case OperationType.Filter:
-        task.filter(op.args[0], op.args[1]);
+        case OperationType.FilterSync:
+        task.filterSync(op.args[0], op.args[1]);
         break;
 
         case OperationType.Print:

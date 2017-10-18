@@ -1,16 +1,15 @@
-import State from './state';
 import IReporter from './reporter';
 import DefaultReporter from './reporters/defaultReporter';
 import EmptyReporter from './reporters/emptyReporter';
 const Promise = require('bluebird') as any;
 
 export default class Task {
-  static fromPromise(promise: any) {
+  static fromPromise(promise: Promise<any[]>) {
     return new Task(promise);
   }
 
-  static fromInitialStates(initialStates: State[]) {
-    return new Task(Promise.resolve(initialStates));
+  static fromArray(array: any[]) {
+    return this.fromPromise(Promise.resolve(array));
   }
 
   /* instance members */
@@ -28,62 +27,46 @@ export default class Task {
     }
   }
 
-  then(description: string, callback: (states: State[]) => any): Task {
+  then(description: string, callback: (array: any[]) => any[]): Task {
     this.checkStringArgument('description', description);
     this.checkFunctionArgument('callback', callback);
 
-    this.promise = this.promise.then((prevValues: State[]) => {
-      this.checkPrevStates(prevValues);
-
+    this.promise = this.promise.then((prevValues: any[]) => {
       const ret = callback(prevValues);
-      if (ret === undefined) {
-        return prevValues;
-      }
-      if (!this.isArrayOfStates(ret)) {
-        // tslint:disable-next-line: max-line-length
-        throw new Error('"then" must return an array of State objects, or you can return undefined to leave everything unchanged');
-      }
+      this.checkReturnArray(ret, 'then');
       return ret;
     });
     return this;
   }
 
-  map(description: string, callback: (current: any, state: State, index: number) => any): Task {
+  mapSync(description: string, callback: (data: any, index: number) => any): Task {
     this.checkStringArgument('description', description);
     this.checkFunctionArgument('callback', callback);
 
-    this.promise = this.promise.then((prevValues: State[]) => {
-      this.checkPrevStates(prevValues);
-
+    this.promise = this.promise.then((prevValues: any[]) => {
       this.reporter.printTitle(`➡️  map: ${description}`);
-      const promises = prevValues.map((element: State, index: number) => {
-        const ret = callback(element.data, element, index);
+      const promises = prevValues.map((value: any, index: number) => {
+        const ret = callback(value, index);
         if (ret === undefined) {
           this.throwReturnUndefined('map');
         }
         return ret;
       });
-      const waitPromise = Promise.all(promises).then((values: any[]) => {
-        return values.map((item, index) => {
-          return new State(prevValues[index].context, item);
-        });
-      });
-      this.reporter.printInfo(`${prevValues.length} state(s)`);
+      const waitPromise = Promise.all(promises);
+      this.reporter.printInfo(`${prevValues.length} item(s)`);
       return waitPromise;
     });
     return this;
   }
 
-  filter(description: string, callback: (current: any, state: State, index: number) => boolean): Task {
+  filterSync(description: string, callback: (data: any, index: number) => boolean): Task {
     this.checkStringArgument('description', description);
     this.checkFunctionArgument('callback', callback);
 
-    this.promise = this.promise.then((prevValues: State[]) => {
-      this.checkPrevStates(prevValues);
-
+    this.promise = this.promise.then((prevValues: any[]) => {
       this.reporter.printTitle(`✂️  filter: ${description}`);
       const newValues = prevValues.filter((element, index) => {
-        const ret = callback(element.data, element, index);
+        const ret = callback(element, index);
         if (ret === undefined) {
           this.throwReturnUndefined('filter');
         }
@@ -103,9 +86,7 @@ export default class Task {
   }
 
   print(): Task {
-    this.promise = this.promise.then((prevValues: State[]) => {
-      this.checkPrevStates(prevValues);
-
+    this.promise = this.promise.then((prevValues: any[]) => {
       this.reporter.printTitle(`😀  print`);
       this.reporter.printInfo(`${prevValues.length} state(s)`);
       prevValues.forEach((value, index) => {
@@ -117,39 +98,25 @@ export default class Task {
     return this;
   }
 
-  private isArrayOfStates(states: any) {
-    if (!Array.isArray(states)) {
-      return false;
-    }
-    if (states.length) {
-      return states[0] instanceof State;
-    }
-    return true;
-  }
-
-  private checkPrevStates(states: any) {
-    if (!this.isArrayOfStates(states)) {
-      this.throwInvalidStates(states);
-    }
-  }
-
-  private throwInvalidStates(value: any) {
-    throw new Error(`The resolved value of Promise should be an array of State objects. It should not be "${value}"`);
-  }
-
   private checkStringArgument(name: string, arg: any) {
     if (typeof arg !== 'string') {
-      throw new Error(`The argument "${name}" should be a string`);
+      throw new Error(`The argument "${name}" must be a string`);
     }
   }
 
   private checkFunctionArgument(name: string, arg: any) {
     if (typeof arg !== 'function') {
-      throw new Error(`The argument "${name}" should be a function`);
+      throw new Error(`The argument "${name}" must be a function`);
     }
   }
 
   private throwReturnUndefined(funcName: string) {
-    throw new Error(`"${funcName}" returns undefined(did you forget to add a return statement?)`);
+    throw new Error(`"${funcName}" cannot return undefined, you can return null. (did you forget to add a return statement?)`);
+  }
+
+  private checkReturnArray(ret: any, funcName: string) {
+    if (!(ret instanceof Array)) {
+      throw new Error(`"${funcName}" must return an array.`);
+    }
   }
 }

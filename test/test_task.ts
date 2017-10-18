@@ -16,105 +16,52 @@ function arrayToMap(array: number[]): { [key: number]: boolean } {
   return map;
 }
 
-function assertStates(values: any, states: ma.State[], expectedValues: any[]) {
-  assert.deepEqual(values, expectedValues);
-  for (let i = 0; i < expectedValues.length; i++) {
-    assert.equal(expectedValues[i], states[i].data);
-  }
-}
-
-const VALUES_MAP = arrayToMap(VALUES);
 const INDICES_MAP = arrayToMap(INDICES);
 
-describe('Task.map', () => {
-  it('map should iterate through all current values', (done) => {
+describe('Task.mapSync', () => {
+  it('Values and indices', (done) => {
     const task = createTask();
-    const valuesMap: { [key: string]: boolean } = {};
-    const indicesMap: { [key: number]: boolean } = {};
-    task.map('', (value: any, state: mkl.State, index: number) => {
-      valuesMap[value] = true;
-      indicesMap[index] = true;
-
-      assert.equal(state.data, value);
-      return value;
-    }).then('', () => {
-      assert.deepEqual(valuesMap, VALUES_MAP);
-      assert.deepEqual(indicesMap, INDICES_MAP);
-      done();
-    });
-    task.runWithStates(mkl.js.array(VALUES));
-  });
-
-  it('Check return values of map', (done) => {
-    const task = createTask();
-    task.map('', (value: number) => {
+    const idxMap: { [key: number]: boolean } = {};
+    task.mapSync('', (value: number, index: number) => {
+      idxMap[index] = true;
       return value + 1;
-    }).then('', (states) => {
-      assert.deepEqual(states.map((s) => s.data), VALUES.map((i) => i + 1));
+    }).then('', (array) => {
+      assert.deepEqual(array, VALUES.map((i) => i + 1));
+      assert.deepEqual(idxMap, INDICES_MAP);
       done();
+      return array;
     });
-    task.runWithStates(mkl.js.array(VALUES));
+    task.runWithArray(VALUES);
   });
 });
 
-describe('Task.filter', () => {
-  it('filter should iterate through all current values', (done) => {
+describe('Task.filterSync', () => {
+  it('filterSync', (done) => {
     const task = createTask();
-    const valuesMap: { [key: string]: boolean } = {};
-    const indicesMap: { [key: number]: boolean } = {};
-    task.filter('', (value: any, state: ma.State, index: number) => {
-      valuesMap[value] = true;
-      indicesMap[index] = true;
-
-      assert.equal(state.data, value);
-      return true;
-    }).then('', () => {
-      assert.deepEqual(valuesMap, VALUES_MAP);
-      assert.deepEqual(indicesMap, INDICES_MAP);
-      done();
-    });
-    task.runWithStates(mkl.js.array(VALUES));
-  });
-
-  it('Check return values of filter', (done) => {
-    const task = createTask();
-    task.filter('', (value: number) => {
+    const idxMap: { [key: number]: boolean } = {};
+    task.filterSync('', (value: number, index: number) => {
+      idxMap[index] = true;
       return value < 0;
-    }).then('', (states) => {
-      assert.deepEqual(states.map((s) => s.data), [-5]);
+    }).then('', (values) => {
+      assert.deepEqual(values, [-5]);
+      assert.deepEqual(idxMap, INDICES_MAP);
       done();
+      return values;
     });
-    task.runWithStates(mkl.js.array(VALUES));
+    task.runWithArray(VALUES);
   });
 });
 
 describe('Task.then', () => {
-  it('then should reflect task\'s values and states', (done) => {
+  it('then', (done) => {
     const task = createTask();
-    task.then('', (states) => {
-      assertStates(states.map((s) => s.data), states, VALUES);
-    }).then('', () => {
+    task.then('', (values) => {
+      return values.filter((v) => v < 0);
+    }).then('', (values) => {
+      assert.deepEqual(values, [-5]);
       done();
+      return values;
     });
-    task.runWithStates(mkl.js.array(VALUES));
-  });
-  it('Return undefined', (done) => {
-    const task = createTask();
-    // tslint:disable-next-line: no-empty
-    task.then('', () => { }).then('', (states) => {
-      assertStates(states.map((s) => s.data), states, VALUES);
-      done();
-    });
-    task.runWithStates(mkl.js.array(VALUES));
-  });
-  it('Return another set of states', (done) => {
-    const task = createTask();
-    task.then('', (states) => {
-      return states.filter((s) => s.data < 0);
-    }).then('', (states) => {
-      assert.deepEqual(states.map((s) => s.data), [-5]);
-      done();
-    });
-    task.runWithStates(mkl.js.array(VALUES));
+    task.runWithArray(VALUES);
   });
 });
