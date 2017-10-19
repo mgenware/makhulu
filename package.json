@@ -28,7 +28,7 @@
     "dev_test": "mocha \"dist/test/*.js\"",
     "build": "yarn test",
     "compile": "tsc",
-    "dev": "tsc -w",
+    "dev": "yarn run clean && tsc -w",
     "prepublishOnly": "yarn run test",
     "copy": "copyfiles \"test/data/**/*.*\" \"dist\"",
     "lint": "tslint -p .",

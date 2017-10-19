@@ -28,28 +28,26 @@ export default class Task {
   }
 
   then(description: string, callback: (array: any[]) => any[]): Task {
-    this.checkStringArgument('description', description);
-    this.checkFunctionArgument('callback', callback);
+    this.checkDescriptionArgument(this.then.name, description);
+    this.checkFunctionArgument(this.then.name, description, callback, 'callback');
 
     this.promise = this.promise.then((prevValues: any[]) => {
       const ret = callback(prevValues);
-      this.checkReturnArray(ret, 'then');
+      this.checkReturnArray(this.then.name, description, ret);
       return ret;
     });
     return this;
   }
 
   mapSync(description: string, callback: (data: any, index: number) => any): Task {
-    this.checkStringArgument('description', description);
-    this.checkFunctionArgument('callback', callback);
+    this.checkDescriptionArgument(this.mapSync.name, description);
+    this.checkFunctionArgument(this.mapSync.name, description, callback, 'callback');
 
     this.promise = this.promise.then((prevValues: any[]) => {
       this.reporter.printTitle(`➡️  map: ${description}`);
       const promises = prevValues.map((value: any, index: number) => {
         const ret = callback(value, index);
-        if (ret === undefined) {
-          this.throwReturnUndefined('map');
-        }
+        this.checkReturnUndefined(this.mapSync.name, description, ret);
         return ret;
       });
       const waitPromise = Promise.all(promises);
@@ -60,19 +58,14 @@ export default class Task {
   }
 
   filterSync(description: string, callback: (data: any, index: number) => boolean): Task {
-    this.checkStringArgument('description', description);
-    this.checkFunctionArgument('callback', callback);
+    this.checkDescriptionArgument(this.filterSync.name, description);
+    this.checkFunctionArgument(this.filterSync.name, description, callback, 'callback');
 
     this.promise = this.promise.then((prevValues: any[]) => {
-      this.reporter.printTitle(`✂️  filter: ${description}`);
+      this.reporter.printTitle(`✂️  filterSync: ${description}`);
       const newValues = prevValues.filter((element, index) => {
         const ret = callback(element, index);
-        if (ret === undefined) {
-          this.throwReturnUndefined('filter');
-        }
-        if (typeof ret !== 'boolean') {
-          throw new Error(`"filter" must return a value of type boolean`);
-        }
+        this.checkReturnNonbool(this.filterSync.name, description, ret);
         return ret;
       });
       if (newValues.length === prevValues.length) {
@@ -98,25 +91,40 @@ export default class Task {
     return this;
   }
 
-  private checkStringArgument(name: string, arg: any) {
-    if (typeof arg !== 'string') {
-      throw new Error(`The argument "${name}" must be a string`);
+  private throwError(funcName: string, desc: string, msg: string): string {
+    if (!desc) {
+      throw new Error(`[Func: "${funcName}"] ${msg}`);
+    }
+    throw new Error(`[Func: "${funcName}", Description: "${desc}"] ${msg}`);
+  }
+
+  private checkDescriptionArgument(funcName: string, desc: any) {
+    if (typeof desc !== 'string') {
+      this.throwError(funcName, desc, `The "description" argument must be a string`);
     }
   }
 
-  private checkFunctionArgument(name: string, arg: any) {
+  private checkFunctionArgument(funcName: string, desc: string, arg: any, name: string) {
     if (typeof arg !== 'function') {
-      throw new Error(`The argument "${name}" must be a function`);
+      this.throwError(funcName, desc, `The argument "${name}" must be a function`);
     }
   }
 
-  private throwReturnUndefined(funcName: string) {
-    throw new Error(`"${funcName}" cannot return undefined, you can return null. (did you forget to add a return statement?)`);
+  private checkReturnUndefined(funcName: string, desc: string, ret: any) {
+    if (ret === undefined) {
+      this.throwError(funcName, desc, `Returning undefined is not allowed, you can return null instead. (did you forget to add a return statement?)`);
+    }
   }
 
-  private checkReturnArray(ret: any, funcName: string) {
+  private checkReturnNonbool(funcName: string, desc: string, ret: any) {
+    if (typeof ret !== 'boolean') {
+      this.throwError(funcName, desc, `Returning non-boolean values are not allowed for this method`);
+    }
+  }
+
+  private checkReturnArray(funcName: string, desc: string, ret: any) {
     if (!(ret instanceof Array)) {
-      throw new Error(`"${funcName}" must return an array.`);
+      this.throwError(funcName, desc, `"${funcName}" must return an array.`);
     }
   }
 }
