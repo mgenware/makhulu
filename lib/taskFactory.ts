@@ -4,7 +4,10 @@ import IReporter from './reporter';
 enum OperationType {
   Then = 1,
   MapSync,
+  MapSeries,
+  MapAsync,
   FilterSync,
+  FilterAsync,
   Print,
   SetReporter,
 }
@@ -29,8 +32,23 @@ export default class TaskFactory {
     return this;
   }
 
+  mapSeries(description: string, callback: (data: any, index: number) => Promise<any>): TaskFactory {
+    this.addOperation(new Operation(OperationType.MapSeries, [description, callback]));
+    return this;
+  }
+
+  mapAsync(description: string, callback: (data: any, index: number) => Promise<any>): TaskFactory {
+    this.addOperation(new Operation(OperationType.MapAsync, [description, callback]));
+    return this;
+  }
+
   filterSync(description: string, callback: (data: any, index: number) => boolean): TaskFactory {
     this.addOperation(new Operation(OperationType.FilterSync, [description, callback]));
+    return this;
+  }
+
+  filterAsync(description: string, callback: (data: any, index: number) => Promise<boolean>): TaskFactory {
+    this.addOperation(new Operation(OperationType.FilterAsync, [description, callback]));
     return this;
   }
 
@@ -62,8 +80,20 @@ export default class TaskFactory {
         task.mapSync(op.args[0], op.args[1]);
         break;
 
+        case OperationType.MapSeries:
+        task.mapSeries(op.args[0], op.args[1]);
+        break;
+
+        case OperationType.MapAsync:
+        task.mapAsync(op.args[0], op.args[1]);
+        break;
+
         case OperationType.FilterSync:
         task.filterSync(op.args[0], op.args[1]);
+        break;
+
+        case OperationType.FilterAsync:
+        task.filterAsync(op.args[0], op.args[1]);
         break;
 
         case OperationType.Print:

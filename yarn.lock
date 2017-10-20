@@ -118,6 +118,10 @@ bluebird@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.0.tgz#791420d7f551eea2897453a8a77653f96606d67c"
 
+bluebird@^3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.1.tgz#d9551f9de98f1fcda1e683d17ee91a0602ee2eb9"
+
 brace-expansion@^1.1.7:
   version "1.1.8"
   resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.8.tgz#c07b211c7c952ec1f8efd51a77ef0d1d3990a292"
@@ -753,6 +757,12 @@ nanomatch@^1.2.1:
     regex-not "^1.0.0"
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
+
+node-filter-async@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/node-filter-async/-/node-filter-async-0.0.4.tgz#6432dbae0f41ec93d97ecb179df4c2bbcb2d6c75"
+  dependencies:
+    bluebird "^3.5.1"
 
 noms@0.0.0:
   version "0.0.0"

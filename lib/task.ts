@@ -1,7 +1,9 @@
 import IReporter from './reporter';
 import DefaultReporter from './reporters/defaultReporter';
 import EmptyReporter from './reporters/emptyReporter';
-const Promise = require('bluebird') as any;
+import { filterAsync } from 'node-filter-async';
+const bluebird = require('bluebird') as any;
+Promise = bluebird;
 
 export default class Task {
   static fromPromise(promise: Promise<any[]>) {
@@ -44,12 +46,55 @@ export default class Task {
     this.checkFunctionArgument(this.mapSync.name, description, callback, 'callback');
 
     this.promise = this.promise.then((prevValues: any[]) => {
-      this.reporter.printTitle(`➡️  map: ${description}`);
+      this.reporter.printTitle(`➡️  mapSync: ${description}`);
       const promises = prevValues.map((value: any, index: number) => {
         const ret = callback(value, index);
         this.checkReturnUndefined(this.mapSync.name, description, ret);
         return ret;
       });
+      const waitPromise = Promise.all(promises);
+      this.reporter.printInfo(`${prevValues.length} item(s)`);
+      return waitPromise;
+    });
+    return this;
+  }
+
+  mapSeries(description: string, callback: (data: any, index: number) => Promise<any>): Task {
+    this.checkDescriptionArgument(this.mapSeries.name, description);
+    this.checkFunctionArgument(this.mapSeries.name, description, callback, 'callback');
+
+    this.promise = this.promise.then((prevValues: any[]) => {
+      this.reporter.printTitle(`➡️  mapSeries: ${description}`);
+      const promises = bluebird.mapSeries(prevValues, (value: any, index: number) => {
+        const ret = callback(value, index);
+        return ret;
+      });
+      const waitPromise = Promise.all(promises);
+      this.reporter.printInfo(`${prevValues.length} item(s)`);
+      return waitPromise;
+    });
+    return this;
+  }
+
+  mapAsync(
+    description: string,
+    callback: (data: any, index: number) => Promise<any>,
+    { concurrency }: { concurrency?: number } = {}): Task {
+    this.checkDescriptionArgument(this.mapAsync.name, description);
+    this.checkFunctionArgument(this.mapAsync.name, description, callback, 'callback');
+
+    let opt: any;
+    if (concurrency) {
+      opt = {};
+      opt.concurrency = concurrency;
+    }
+
+    this.promise = this.promise.then((prevValues: any[]) => {
+      this.reporter.printTitle(`➡️  mapAsync: ${description}`);
+      const promises = bluebird.map(prevValues, (value: any, index: number) => {
+        const ret = callback(value, index);
+        return ret;
+      }, opt);
       const waitPromise = Promise.all(promises);
       this.reporter.printInfo(`${prevValues.length} item(s)`);
       return waitPromise;
@@ -66,6 +111,27 @@ export default class Task {
       const newValues = prevValues.filter((element, index) => {
         const ret = callback(element, index);
         this.checkReturnNonbool(this.filterSync.name, description, ret);
+        return ret;
+      });
+      if (newValues.length === prevValues.length) {
+        this.reporter.printInfo(`${prevValues.length} state(s)`);
+      } else {
+        this.reporter.printInfo(`${prevValues.length} -> ${newValues.length} state(s)`);
+      }
+      return newValues;
+    });
+    return this;
+  }
+
+  filterAsync(description: string, callback: (data: any, index: number) => Promise<boolean>): Task {
+    this.checkDescriptionArgument(this.filterAsync.name, description);
+    this.checkFunctionArgument(this.filterAsync.name, description, callback, 'callback');
+
+    this.promise = this.promise.then(async (prevValues: any[]) => {
+      this.reporter.printTitle(`✂️  filterAsync: ${description}`);
+
+      const newValues = await filterAsync(prevValues, (value, index) => {
+        const ret = callback(value, index);
         return ret;
       });
       if (newValues.length === prevValues.length) {

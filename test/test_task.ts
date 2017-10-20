@@ -15,6 +15,13 @@ function arrayToMap(array: number[]): { [key: number]: boolean } {
   }
   return map;
 }
+function makePromise(ret: any): Promise<any> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(ret);
+    }, 200);
+  });
+}
 
 const INDICES_MAP = arrayToMap(INDICES);
 
@@ -35,6 +42,40 @@ describe('Task.mapSync', () => {
   });
 });
 
+describe('Task.mapSeries', () => {
+  it('Values and indices', (done) => {
+    const task = createTask();
+    const idxMap: { [key: number]: boolean } = {};
+    task.mapSeries('', (value: number, index: number) => {
+      idxMap[index] = true;
+      return makePromise(value + 1);
+    }).then('', (array) => {
+      assert.deepEqual(array, VALUES.map((i) => i + 1));
+      assert.deepEqual(idxMap, INDICES_MAP);
+      done();
+      return array;
+    });
+    task.runWithArray(VALUES);
+  });
+});
+
+describe('Task.mapAsync', () => {
+  it('Values and indices', (done) => {
+    const task = createTask();
+    const idxMap: { [key: number]: boolean } = {};
+    task.mapAsync('', (value: number, index: number) => {
+      idxMap[index] = true;
+      return makePromise(value + 1);
+    }).then('', (array) => {
+      assert.deepEqual(array, VALUES.map((i) => i + 1));
+      assert.deepEqual(idxMap, INDICES_MAP);
+      done();
+      return array;
+    });
+    task.runWithArray(VALUES);
+  });
+});
+
 describe('Task.filterSync', () => {
   it('filterSync', (done) => {
     const task = createTask();
@@ -42,6 +83,23 @@ describe('Task.filterSync', () => {
     task.filterSync('', (value: number, index: number) => {
       idxMap[index] = true;
       return value < 0;
+    }).then('', (values) => {
+      assert.deepEqual(values, [-5]);
+      assert.deepEqual(idxMap, INDICES_MAP);
+      done();
+      return values;
+    });
+    task.runWithArray(VALUES);
+  });
+});
+
+describe('Task.filterAsync', () => {
+  it('filterAsync', (done) => {
+    const task = createTask();
+    const idxMap: { [key: number]: boolean } = {};
+    task.filterAsync('', async (value: number, index: number) => {
+      idxMap[index] = true;
+      return makePromise(value < 0);
     }).then('', (values) => {
       assert.deepEqual(values, [-5]);
       assert.deepEqual(idxMap, INDICES_MAP);
