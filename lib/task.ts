@@ -150,7 +150,7 @@ export default class Task {
       this.reporter.printInfo(`${prevValues.length} state(s)`);
       prevValues.forEach((value, index) => {
         /* tslint:disable-next-line:no-console */
-        console.log(`[${index}] Value: ${value.data} Context: ${value.context.toString()}`);
+        console.log(`[${index}]: ${value}`);
       });
       return prevValues;
     });
