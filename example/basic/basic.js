@@ -11,17 +11,19 @@ function makePromise(name, delay) {
   });
 }
 
-mkl.js.array([2000, 200, 2])
-  .map('Create an array of Promises', (value) => {
+const task = new mkl.Task()
+  .mapAsync('Create an array of Promises', (value) => {
     return makePromise(value, value);
   })
   .print()
-  .map('Add return values by 1', (value) => {
+  .mapSync('Add return values by 1', (value) => {
     return value - 1;
   })
   .print()
-  .filter('Filter out all return values less than 1000', (value) => {
+  .filterSync('Filter out all return values less than 1000', (value) => {
     return value < 1000;
   })
   .print();
+
+task.runWithArray([2000, 200, 2]);
 console.log('Task started');
