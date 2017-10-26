@@ -19,6 +19,7 @@
     "@types/globby": "^6.1.0",
     "@types/mocha": "^2.2.43",
     "@types/node": "^8.0.29",
+    "copyfiles": "^1.2.0",
     "mocha": "*",
     "tslint": "^5.7.0",
     "typescript": "^2.5.3"
@@ -30,8 +31,8 @@
     "compile": "tsc",
     "dev": "yarn run clean && tsc -w",
     "prepublishOnly": "yarn run test",
+    "lint": "tslint --project .",
     "copy": "copyfiles \"test/data/**/*.*\" \"dist\"",
-    "lint": "tslint -p .",
     "clean:dist": "rm -rf dist",
     "clean": "npm run clean:dist"
   },
@@ -42,11 +43,6 @@
     "bluebird": "^3.5.0",
     "chalk": "^2.1.0",
     "cli-progress": "^1.6.0",
-    "copyfiles": "^1.2.0",
-    "fast-glob": "^1.0.1",
-    "fs-syncx": "^0.0.4",
-    "globby": "^6.1.0",
-    "node-filter-async": "^0.0.4",
-    "write": "^1.0.3"
+    "node-filter-async": "^0.0.4"
   }
 }
