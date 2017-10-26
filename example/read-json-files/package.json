@@ -9,6 +9,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "bluebird": "^3.5.1"
+    "bluebird": "^3.5.1",
+    "globby": "^6.1.0",
+    "m-fs": "0.0.1"
   }
 }

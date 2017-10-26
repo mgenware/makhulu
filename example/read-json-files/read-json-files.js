@@ -1,18 +1,21 @@
 const mkl = require('../..');
+const globby = require('globby');
+const mfs = require('m-fs');
 
-mkl.fs.glob('./data/**/*.json')
-  .map('Read files', (file) => {
-    return mkl.fs.readFileAsync(file);
+const task = new mkl.Task()
+  .mapAsync('Read files', (file) => {
+    return mfs.readFileAsync(file);
   })
-  .map('Parse JSON', (content) => {
+  .mapSync('Parse JSON', (content) => {
     return JSON.parse(content);
   })
-  .filter('Filter objects', (person) => {
+  .filterSync('Filter objects', (person) => {
     return person.gender === 'male' && person.age >= 18;
   })
-  .map('Map names', person => person.name)
-  .then('Print names', (states) => {
-    const names = states.map(s => s.data);
+  .mapSync('Map names', person => person.name)
+  .then('Print names', (names) => {
     console.log(`Males over 18: ${names}`);
+    return names;
   });
-console.log('Task started');
+
+task.runWithPromise(globby('data/**/*.json'));
