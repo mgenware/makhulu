@@ -10,21 +10,29 @@ const DEST = './dist';
 const task = new mkl.Task()
   .print()
   .mapAsync('Read files', (file) => {
-    return mfs.readFileAsync(file);
+    return {
+      file,
+      content: mfs.readFileAsync(file),
+    };
   })
-  .filterSync('All documents containing "confidential" will not be processed', (content) => {
-    return content.includes('confidential') === false;
+  .filterSync('All documents containing "confidential" will not be processed', (item) => {
+    return {
+      file: item.file,
+      content: item.content.includes('confidential') === false,
+    };
   })
-  .mapSync('Markdown to HTML', (content) => {
-    return md.render(content.toString());
+  .mapSync('Markdown to HTML', (item) => {
+    return {
+      file: item.file, 
+      content: md.render(item.content.toString()),
+    };
   })
-  .mapAsync('Save to disk', (html, state) => {
-    const srcFile = mkl.fs.getRelativePathFromContext(state.context);
-    const destFile = path.join(DEST, rename(srcFile, (pathObj) => {
+  .mapAsync('Save to disk', (item) => {
+    const destFile = path.join(DEST, rename(item.file, (pathObj) => {
       pathObj.ext = '.md';
     }));
 
-    return mfs.writeFileAsync(destFile, html);
+    return mfs.writeFileAsync(destFile, item.content);
   });
 
 task.runWithPromise(globby('data/**/*.md'));
