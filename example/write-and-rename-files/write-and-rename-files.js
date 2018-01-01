@@ -9,21 +9,18 @@ const DEST = './dist';
 
 const task = new mkl.Task()
   .print()
-  .mapAsync('Read files', (file) => {
+  .mapAsync('Read files', async (file) => {
     return {
       file,
-      content: mfs.readFileAsync(file),
+      content: await mfs.readFileAsync(file),
     };
   })
   .filterSync('All documents containing "confidential" will not be processed', (item) => {
-    return {
-      file: item.file,
-      content: item.content.includes('confidential') === false,
-    };
+    return !item.content.includes('confidential');
   })
   .mapSync('Markdown to HTML', (item) => {
     return {
-      file: item.file, 
+      file: item.file,
       content: md.render(item.content.toString()),
     };
   })
