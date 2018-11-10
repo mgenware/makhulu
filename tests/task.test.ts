@@ -21,9 +21,9 @@ test('Creation', () => {
   ]);
 });
 
-test('updateEntryAsync', async () => {
+test('updateEntriesAsync', async () => {
   const t = task();
-  await t.updateEntryAsync(async e => {
+  await t.updateEntriesAsync(async e => {
     if (e.value % 2 === 0) {
       await sleep(300);
     }

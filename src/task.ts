@@ -27,7 +27,7 @@ export default class Task<T> {
     return this.dataList.map(d => d.typeInfo);
   }
 
-  async updateEntryAsync<K>(fn: (entry: DataEntry<T>) => Promise<DataEntry<K>>): Promise<Task<K>> {
+  async updateEntriesAsync<K>(fn: (entry: DataEntry<T>) => Promise<DataEntry<K>>): Promise<Task<K>> {
     const promises = this.dataList.map(fn);
     const results = await Promise.all(promises);
     this.dataList = (results as unknown) as Array<DataEntry<T>>;
@@ -35,7 +35,7 @@ export default class Task<T> {
   }
 
   async mapAsync<K>(fn: (value: T) => Promise<K>): Promise<Task<K>> {
-    return await this.updateEntryAsync(async e => {
+    return await this.updateEntriesAsync(async e => {
       const value = await fn(e.value);
       return e.setValue(value);
     });
