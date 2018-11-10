@@ -37,6 +37,19 @@ test('updateListAsync', async () => {
   ]);
 });
 
+test('updateListAsync with error', async () => {
+  const t = task();
+  try {
+    await t.updateListAsync(async () => {
+      await sleep(300);
+      throw new Error('Fake');
+    });
+    fail('Should catch an error');
+  } catch (ex) {
+    expect(ex.message).toBe('Fake');
+  }
+});
+
 test('mapAsync', async () => {
   const t = task();
   await t.mapAsync(async v => `s ${v}`);
