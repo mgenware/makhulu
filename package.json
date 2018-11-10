@@ -1,18 +1,18 @@
 {
   "name": "makhulu",
   "version": "0.0.1",
-  "description": "<NoDescription>",
+  "description": "Simple and parallel Node.js task runner",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "author": "Mgen (https://www.mgenware.com)",
-  "homepage": "https://github.com/mgenware/layit",
-  "bugs": "https://github.com/mgenware/layit/issues",
+  "homepage": "https://github.com/mgenware/makhulu",
+  "bugs": "https://github.com/mgenware/makhulu/issues",
   "keywords": [
-    "layit"
+    "task runner"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/mgenware/layit.git"
+    "url": "https://github.com/mgenware/makhulu.git"
   },
   "license": "MIT",
   "scripts": {

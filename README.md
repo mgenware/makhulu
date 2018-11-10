@@ -5,4 +5,4 @@
 [![npm version](https://img.shields.io/npm/v/makhulu.svg?style=flat-square)](https://npmjs.com/package/makhulu)
 [![Node.js Version](http://img.shields.io/node/v/makhulu.svg?style=flat-square)](https://nodejs.org/en/)
 
-🦁 Simple and parallel task runner
+🦁 Simple and parallel Node.js task runner 
