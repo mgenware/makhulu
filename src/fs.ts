@@ -25,7 +25,7 @@ export default class FS {
     return 'file.content';
   }
 
-  static async src(baseDir: string, patterns: string | string[], options?: object): Promise<DataList> {
+  static async src(baseDir: string, patterns?: string | string[], options?: object): Promise<DataList> {
     throwIfFalsy(baseDir, 'baseDir');
     if (!patterns || (Array.isArray(patterns) && patterns.length === 0)) {
       patterns = ['**/*'];
