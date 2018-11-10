@@ -7,7 +7,7 @@ function map(obj: object) {
 }
 
 test('FileData', () => {
-  const fileData = fileSystem.fileDataList(['a', 'b']);
+  const fileData = fileSystem.fileList(['a', 'b']);
   expect(fileData.list.length).toBe(2);
   expect(fileData.list[0].value).toBe('a');
   expect(fileData.list[0].typeInfo).toEqual(map({FILE: 'a'}));
@@ -18,4 +18,10 @@ test('FileData', () => {
 test('glob', async () => {
   const fileData = await fileSystem.globAsync(`${GlobFiles}*.txt`);
   expect(fileData.values().sort()).toEqual(['a.txt', 'c.txt'].map(f => GlobFiles + f).sort());
+});
+
+test('fileToContentString', async () => {
+  const fileData = await fileSystem.globAsync(`${GlobFiles}*.txt`);
+  await fileData.mapAsync(fileSystem.fileToContentStringAsync);
+  expect(fileData.values()).toEqual(['A\n', 'C\n']);
 });
