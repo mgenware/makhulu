@@ -24,18 +24,18 @@ export default class DataList {
     return this.list.map(d => d[key]);
   }
 
-  async mapAsync(fn: (entry: IData) => Promise<IData>): Promise<DataList> {
+  async map(fn: (entry: IData) => Promise<IData>): Promise<DataList> {
     const promises = this.list.map(fn);
     this.list = await Promise.all(promises);
     return this;
   }
 
-  async resetAsync(fn: (list: IData[]) => Promise<IData[]>): Promise<DataList> {
+  async reset(fn: (list: IData[]) => Promise<IData[]>): Promise<DataList> {
     this.list = await fn(this.list);
     return this;
   }
 
-  async filterAsync(fn: (item: IData) => Promise<boolean>): Promise<DataList> {
+  async filter(fn: (item: IData) => Promise<boolean>): Promise<DataList> {
     this.list = await filterAsync(this.list, fn);
     return this;
   }

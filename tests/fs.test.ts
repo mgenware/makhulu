@@ -3,7 +3,7 @@ import { fs } from '../';
 const GlobFiles = './tests/glob-files/';
 
 test('glob', async () => {
-  const fileData = await fs.globAsync(`${GlobFiles}*.txt`);
+  const fileData = await fs.glob(`${GlobFiles}*.txt`);
   expect(fileData.list).toEqual([
     { [fs.RelativeFilePath]: './tests/glob-files/a.txt' },
     { [fs.RelativeFilePath]: './tests/glob-files/c.txt' },
@@ -11,8 +11,8 @@ test('glob', async () => {
 });
 
 test('fileToContentString', async () => {
-  const fileData = await fs.globAsync(`${GlobFiles}**/*.txt`);
-  await fileData.mapAsync(fs.fileToContentStringAsync);
+  const fileData = await fs.glob(`${GlobFiles}**/*.txt`);
+  await fileData.map(fs.fileToContentString);
   expect(fileData.list).toEqual([
     { [fs.RelativeFilePath]: './tests/glob-files/a.txt', [fs.FileContent]: 'A\n' },
     { [fs.RelativeFilePath]: './tests/glob-files/c.txt', [fs.FileContent]: 'C\n' },

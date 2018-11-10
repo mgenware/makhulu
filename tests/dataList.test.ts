@@ -29,9 +29,9 @@ test('values', () => {
   expect(t.values('num')).toEqual([1, 2]);
 });
 
-test('mapAsync', async () => {
+test('map', async () => {
   const t = task();
-  await t.mapAsync(async d => {
+  await t.map(async d => {
     if ((d.num as number) % 2 === 0) {
       await sleep(300);
     }
@@ -45,10 +45,10 @@ test('mapAsync', async () => {
   ]);
 });
 
-test('mapAsync with error', async () => {
+test('map with error', async () => {
   const t = task();
   try {
-    await t.mapAsync(async () => {
+    await t.map(async () => {
       await sleep(300);
       throw new Error('Fake');
     });
@@ -58,9 +58,9 @@ test('mapAsync with error', async () => {
   }
 });
 
-test('filterAsync', async () => {
+test('filter', async () => {
   const t = task();
-  await t.filterAsync(async d => {
+  await t.filter(async d => {
     if ((d.num as number) % 2 === 0) {
       await sleep(300);
     }
@@ -69,11 +69,11 @@ test('filterAsync', async () => {
   expect(t.list).toEqual([{ num: 2 }]);
 });
 
-test('resetAsync', async () => {
+test('reset', async () => {
   const t = task();
   const prevEntries = t.list;
   await sleep(300);
-  await t.resetAsync(async entries => {
+  await t.reset(async entries => {
     const copied = [...entries];
     copied.reverse();
     return copied;

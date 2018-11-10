@@ -17,12 +17,12 @@ export default class FS {
     return 'file.content';
   }
 
-  static async globAsync(patterns: string | string[], options?: object): Promise<DataList> {
+  static async glob(patterns: string | string[], options?: object): Promise<DataList> {
     const paths = await globby(patterns, options);
     return new DataList(paths.map(p => ({ [FS.RelativeFilePath]: p })));
   }
 
-  static async fileToContentStringAsync(d: IData): Promise<IData> {
+  static async fileToContentString(d: IData): Promise<IData> {
     const path = d[FS.RelativeFilePath] as string;
     if (!path) {
       throw new Error(`fileToContentStringAsync: Relative path not found on data object "${d}"`);
