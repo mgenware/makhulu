@@ -76,6 +76,24 @@ test('src - no glob', async () => {
   ]);
 });
 
+test('src - multiple patterns', async () => {
+  const fileData = await mk.fs.src(FilesDir, ['**/*', '!*.json']);
+  testFileData(fileData.list, [
+    {
+      [mk.fs.RelativePath]: 'a.txt',
+      [mk.fs.SrcPath]: 'tests/glob-files/a.txt',
+    },
+    {
+      [mk.fs.RelativePath]: 'c.txt',
+      [mk.fs.SrcPath]: 'tests/glob-files/c.txt',
+    },
+    {
+      [mk.fs.RelativePath]: 'sub/d.txt',
+      [mk.fs.SrcPath]: 'tests/glob-files/sub/d.txt',
+    },
+  ]);
+});
+
 test('fileToContentString', async () => {
   const fileData = await mk.fs.src(FilesDir, '**/*.txt');
   await fileData.map(mk.fs.fileToContentString);
