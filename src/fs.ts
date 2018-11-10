@@ -1,24 +1,36 @@
-import DataList from './dataList';
+import DataList, { IData } from './dataList';
 import * as globby from 'globby';
 import { promisify } from 'util';
 import * as fs from 'fs';
 const readFileAsync = promisify(fs.readFile);
 
 export default class FS {
-  static get FileType(): string {
-    return 'FILE';
+  static get RelativeFilePath(): string {
+    return 'file.path.relative';
   }
 
-  static fileList(values: string[]): DataList<string> {
-    return new DataList(values, s => new Map<string, unknown>([[FS.FileType, s]]));
+  static get AbsoluteFilePath(): string {
+    return 'file.path.absolute';
   }
 
-  static async globAsync(patterns: string | string[], options?: object): Promise<DataList<string>> {
+  static get FileContent(): string {
+    return 'file.content';
+  }
+
+  static async globAsync(patterns: string | string[], options?: object): Promise<DataList> {
     const paths = await globby(patterns, options);
-    return FS.fileList(paths);
+    return new DataList(paths.map(p => ({ [FS.RelativeFilePath]: p })));
   }
 
-  static async fileToContentStringAsync(path: string): Promise<string> {
-    return await readFileAsync(path, 'utf8');
+  static async fileToContentStringAsync(d: IData): Promise<IData> {
+    const path = d[FS.RelativeFilePath] as string;
+    if (!path) {
+      throw new Error(`fileToContentStringAsync: Relative path not found on data object "${d}"`);
+    }
+    const content = await readFileAsync(path, 'utf8');
+    return {
+      ...d,
+      [FS.FileContent]: content,
+    };
   }
 }

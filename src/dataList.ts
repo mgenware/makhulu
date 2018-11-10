@@ -1,61 +1,42 @@
-import { default as DataItem, TypeInfo } from './dataItem';
-import { throwIfFalsy } from 'throw-if-arg-empty';
 import { filterAsync } from 'node-filter-async';
 
-export default class DataList<T> {
-  list: Array<DataItem<T>>;
+export interface IData {
+  [key: string]: unknown;
+}
+
+export default class DataList {
+  static all(values: Array<unknown>, type: string): DataList {
+    if (!values) {
+      return new DataList();
+    }
+    return new DataList(values.map(v => ({ [type]: v})));
+  }
+
+  list: IData[];
 
   constructor(
-    data: T[],
-    typeInfoFn?: (entry: T) => TypeInfo,
+    list?: IData[],
   ) {
-    throwIfFalsy(data, 'data');
-    const entries = data.map(d => {
-      const entry = new DataItem(d);
-      if (typeInfoFn) {
-        entry.typeInfo = typeInfoFn(d);
-      }
-      return entry;
-    });
-    this.list = entries;
+    this.list = list || [];
   }
 
-  values(): T[] {
-    return this.list.map(d => d.value);
+  values(key: string): unknown {
+    return this.list.map(d => d[key]);
   }
 
-  typeInfos(): TypeInfo[] {
-    return this.list.map(d => d.typeInfo);
-  }
-
-  async updateListAsync<K>(fn: (entry: DataItem<T>) => Promise<DataItem<K>>): Promise<DataList<K>> {
+  async mapAsync(fn: (entry: IData) => Promise<IData>): Promise<DataList> {
     const promises = this.list.map(fn);
-    const results = await Promise.all(promises);
-    return this.setDataList(results);
-  }
-
-  async resetListAsync<K>(fn: (list: Array<DataItem<T>>) => Promise<Array<DataItem<K>>>): Promise<DataList<K>> {
-    return this.setDataList(await fn(this.list));
-  }
-
-  async filterListAsync(fn: (item: DataItem<T>) => Promise<boolean>): Promise<DataList<T>> {
-    this.list = await filterAsync(this.list, fn);
+    this.list = await Promise.all(promises);
     return this;
   }
 
-  async mapAsync<K>(fn: (value: T) => Promise<K>): Promise<DataList<K>> {
-    return await this.updateListAsync(async e => {
-      const value = await fn(e.value);
-      return e.setValue(value);
-    });
+  async resetAsync(fn: (list: IData[]) => Promise<IData[]>): Promise<DataList> {
+    this.list = await fn(this.list);
+    return this;
   }
 
-  async filterAsync(fn: (value: T) => Promise<boolean>): Promise<DataList<T>> {
-    return await this.filterListAsync(async e => fn(e.value));
-  }
-
-  private setDataList<K>(dataList: Array<DataItem<K>>): DataList<K> {
-    this.list = (dataList as unknown) as Array<DataItem<T>>;
-    return (this as unknown) as DataList<K>;
+  async filterAsync(fn: (item: IData) => Promise<boolean>): Promise<DataList> {
+    this.list = await filterAsync(this.list, fn);
+    return this;
   }
 }
