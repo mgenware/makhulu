@@ -1,2 +1,2 @@
-export { default as DataEntry } from './dataEntry';
-export { default as Task } from './task';
+export { default as DataItem } from './dataItem';
+export { default as DataList } from './dataList';

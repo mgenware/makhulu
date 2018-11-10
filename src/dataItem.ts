@@ -1,6 +1,6 @@
 export type TypeInfo = Map<string, unknown>;
 
-export default class DataEntry<T> {
+export default class DataItem<T> {
   typeInfo: TypeInfo;
 
   constructor(
@@ -9,8 +9,8 @@ export default class DataEntry<T> {
     this.typeInfo = new Map<string, unknown>();
   }
 
-  setValue<K>(value: K): DataEntry<K> {
+  setValue<K>(value: K): DataItem<K> {
     this.value = (value as unknown) as T;
-    return (this as unknown) as DataEntry<K>;
+    return (this as unknown) as DataItem<K>;
   }
 }

@@ -1,7 +1,7 @@
-import { Task } from '../';
+import { DataList } from '../';
 
-function task(): Task<number> {
-  return new Task([1, 2], d => new Map<string, unknown>([['raw', d]]));
+function task(): DataList<number> {
+  return new DataList([1, 2], d => new Map<string, unknown>([['raw', d]]));
 }
 
 function set(obj: object) {
@@ -21,9 +21,9 @@ test('Creation', () => {
   ]);
 });
 
-test('updateEntriesAsync', async () => {
+test('updateListAsync', async () => {
   const t = task();
-  await t.updateEntriesAsync(async e => {
+  await t.updateListAsync(async e => {
     if (e.value % 2 === 0) {
       await sleep(300);
     }
@@ -43,9 +43,9 @@ test('mapAsync', async () => {
   expect(t.values()).toEqual(['s 1', 's 2']);
 });
 
-test('filterEntriesAsync', async () => {
+test('filterListAsync', async () => {
   const t = task();
-  await t.filterEntriesAsync(async e => {
+  await t.filterListAsync(async e => {
     if (e.value % 2 === 0) {
       await sleep(300);
     }
@@ -63,15 +63,15 @@ test('filterAsync', async () => {
   expect(t.values()).toEqual([2]);
 });
 
-test('resetEntriesAsync', async () => {
+test('resetListAsync', async () => {
   const t = task();
-  const prevEntries = t.dataList;
+  const prevEntries = t.list;
   await sleep(300);
-  await t.resetEntriesAsync(async entries => {
+  await t.resetListAsync(async entries => {
     const copied = [...entries];
     copied.reverse();
     return copied;
   });
   prevEntries.reverse();
-  expect(t.dataList).toEqual(prevEntries);
+  expect(t.list).toEqual(prevEntries);
 });
