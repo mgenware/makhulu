@@ -4,6 +4,10 @@ export interface IData {
   [key: string]: unknown;
 }
 
+export type MapFn = (entry: IData) => Promise<IData>;
+export type FilterFn = (entry: IData) => Promise<boolean>;
+export type ResetFn = (list: IData[]) => Promise<IData[]>;
+
 export default class DataList {
   static all(values: Array<unknown>, type: string): DataList {
     if (!values) {
@@ -24,18 +28,18 @@ export default class DataList {
     return this.list.map(d => d[key]);
   }
 
-  async map(fn: (entry: IData) => Promise<IData>): Promise<DataList> {
+  async map(fn: MapFn): Promise<DataList> {
     const promises = this.list.map(fn);
     this.list = await Promise.all(promises);
     return this;
   }
 
-  async reset(fn: (list: IData[]) => Promise<IData[]>): Promise<DataList> {
+  async reset(fn: ResetFn): Promise<DataList> {
     this.list = await fn(this.list);
     return this;
   }
 
-  async filter(fn: (item: IData) => Promise<boolean>): Promise<DataList> {
+  async filter(fn: FilterFn): Promise<DataList> {
     this.list = await filterAsync(this.list, fn);
     return this;
   }

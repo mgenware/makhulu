@@ -33,8 +33,8 @@
     "trailingComma": "all"
   },
   "devDependencies": {
-    "@types/globby": "^8.0.0",
     "@types/jest": "^23.3.9",
+    "@types/make-dir": "^1.0.3",
     "@types/node": "^10.12.5",
     "jest": "^23.6.0",
     "rimraf": "^2.6.2",
@@ -42,7 +42,8 @@
     "typescript": "^3.1.6"
   },
   "dependencies": {
-    "globby": "^8.0.1",
+    "fast-glob": "^2.2.3",
+    "make-dir": "^1.3.0",
     "node-filter-async": "^1.0.1",
     "throw-if-arg-empty": "^1.0.1"
   }
