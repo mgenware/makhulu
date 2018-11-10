@@ -27,6 +27,10 @@ export default class FS {
 
   static async src(baseDir: string, patterns?: string | string[], options?: object): Promise<DataList> {
     throwIfFalsy(baseDir, 'baseDir');
+    if (baseDir.includes('*') || baseDir.includes('?')) {
+      throw new Error(`"baseDir" looks like a glob, please specify "baseDir" as a valid file path and only use glob in the second "pattern" parameter, "baseDir" value: "${baseDir}"`);
+    }
+
     if (!patterns || (Array.isArray(patterns) && patterns.length === 0)) {
       patterns = ['**/*'];
     }
