@@ -4,7 +4,7 @@ function task(): DataList<number> {
   return new DataList([1, 2], d => new Map<string, unknown>([['raw', d]]));
 }
 
-function set(obj: object) {
+function map(obj: object) {
   return new Map(Object.entries(obj));
 }
 
@@ -16,8 +16,8 @@ test('Creation', () => {
   const t = task();
   expect(t.values()).toEqual([1, 2]);
   expect(t.typeInfos()).toEqual([
-    set({raw: 1}),
-    set({raw: 2}),
+    map({raw: 1}),
+    map({raw: 2}),
   ]);
 });
 
@@ -32,8 +32,8 @@ test('updateListAsync', async () => {
   });
   expect(t.values()).toEqual(['s 1', 's 2']);
   expect(t.typeInfos()).toEqual([
-    set({raw: -1}),
-    set({raw: -1}),
+    map({raw: -1}),
+    map({raw: -1}),
   ]);
 });
 
@@ -53,7 +53,7 @@ test('filterListAsync', async () => {
   });
   expect(t.values()).toEqual([2]);
   expect(t.typeInfos()).toEqual([
-    set({raw: 2}),
+    map({raw: 2}),
   ]);
 });
 

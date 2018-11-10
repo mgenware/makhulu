@@ -33,6 +33,7 @@
     "trailingComma": "all"
   },
   "devDependencies": {
+    "@types/globby": "^8.0.0",
     "@types/jest": "^23.3.9",
     "@types/node": "^10.12.5",
     "jest": "^23.6.0",
@@ -41,6 +42,7 @@
     "typescript": "^3.1.6"
   },
   "dependencies": {
+    "globby": "^8.0.1",
     "node-filter-async": "^1.0.1",
     "throw-if-arg-empty": "^1.0.1"
   }
