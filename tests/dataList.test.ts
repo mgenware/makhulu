@@ -1,7 +1,7 @@
 import { DataList } from '../';
 
 function task(): DataList {
-  return new DataList([1, 2].map(d => ({ num: d})));
+  return new DataList([1, 2].map(d => ({ num: d}))).disableLogging();
 }
 
 function sleep(ms: number) {
@@ -31,7 +31,7 @@ test('values', () => {
 
 test('map', async () => {
   const t = task();
-  await t.map(async d => {
+  await t.map('t', async d => {
     if ((d.num as number) % 2 === 0) {
       await sleep(300);
     }
@@ -48,7 +48,7 @@ test('map', async () => {
 test('map with error', async () => {
   const t = task();
   try {
-    await t.map(async () => {
+    await t.map('t', async () => {
       await sleep(300);
       throw new Error('Fake');
     });
@@ -60,7 +60,7 @@ test('map with error', async () => {
 
 test('filter', async () => {
   const t = task();
-  await t.filter(async d => {
+  await t.filter('t', async d => {
     if ((d.num as number) % 2 === 0) {
       await sleep(300);
     }
@@ -73,7 +73,7 @@ test('reset', async () => {
   const t = task();
   const prevEntries = t.list;
   await sleep(300);
-  await t.reset(async entries => {
+  await t.reset('t', async entries => {
     const copied = [...entries];
     copied.reverse();
     return copied;

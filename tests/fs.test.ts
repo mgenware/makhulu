@@ -24,6 +24,7 @@ function testFileData(a: object[], b: object[]) {
 
 test('src - ** - direct children', async () => {
   const fileData = await mk.fs.src(FilesDir, '*.txt');
+  fileData.disableLogging();
   testFileData(fileData.list, [
     {
       [mk.fs.RelativePath]: 'a.txt',
@@ -38,6 +39,7 @@ test('src - ** - direct children', async () => {
 
 test('src - ** - all children', async () => {
   const fileData = await mk.fs.src(FilesDir, '**/*.txt');
+  fileData.disableLogging();
   testFileData(fileData.list, [
     {
       [mk.fs.RelativePath]: 'a.txt',
@@ -56,6 +58,7 @@ test('src - ** - all children', async () => {
 
 test('src - no glob', async () => {
   const fileData = await mk.fs.src(FilesDir);
+  fileData.disableLogging();
   testFileData(fileData.list, [
     {
       [mk.fs.RelativePath]: 'a.txt',
@@ -78,6 +81,7 @@ test('src - no glob', async () => {
 
 test('src - multiple patterns', async () => {
   const fileData = await mk.fs.src(FilesDir, ['**/*', '!*.json']);
+  fileData.disableLogging();
   testFileData(fileData.list, [
     {
       [mk.fs.RelativePath]: 'a.txt',
@@ -96,7 +100,8 @@ test('src - multiple patterns', async () => {
 
 test('fileToContentString', async () => {
   const fileData = await mk.fs.src(FilesDir, '**/*.txt');
-  await fileData.map(mk.fs.fileToContentString);
+  fileData.disableLogging();
+  await fileData.map('Read files', mk.fs.fileToContentString);
   testFileData(fileData.list, [
     {
       [mk.fs.RelativePath]: 'a.txt',
@@ -118,7 +123,8 @@ test('fileToContentString', async () => {
 
 test('saveToDirectory', async () => {
   const fileData = await mk.fs.src(FilesDir, '**/*.txt');
-  await fileData.map(mk.fs.fileToContentString);
-  await fileData.map(mk.fs.saveToDirectory('./dist_tests/files/'));
+  fileData.disableLogging();
+  await fileData.map('Read files', mk.fs.fileToContentString);
+  await fileData.map('Write files', mk.fs.saveToDirectory('./dist_tests/files/'));
   await testFileAsync('./dist_tests/files/a.txt', 'A\n');
 });
