@@ -33,4 +33,11 @@ export default class Task<T> {
     this.dataList = (results as unknown) as Array<DataEntry<T>>;
     return (this as unknown) as Task<K>;
   }
+
+  async mapAsync<K>(fn: (value: T) => Promise<K>): Promise<Task<K>> {
+    return await this.updateEntryAsync(async e => {
+      const value = await fn(e.value);
+      return e.setValue(value);
+    });
+  }
 }
