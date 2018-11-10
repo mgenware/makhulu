@@ -42,3 +42,23 @@ test('mapAsync', async () => {
   await t.mapAsync(async v => `s ${v}`);
   expect(t.values()).toEqual(['s 1', 's 2']);
 });
+
+test('filterEntriesAsync', async () => {
+  const t = task();
+  await t.filterEntriesAsync(async e => {
+    if (e.value % 2 === 0) {
+      await sleep(300);
+    }
+    return e.value % 2 === 0;
+  });
+  expect(t.values()).toEqual([2]);
+  expect(t.typeInfos()).toEqual([
+    set({raw: 2}),
+  ]);
+});
+
+test('filterAsync', async () => {
+  const t = task();
+  await t.filterAsync(async v => v % 2 === 0);
+  expect(t.values()).toEqual([2]);
+});

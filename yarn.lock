@@ -2370,6 +2370,11 @@ needle@^2.2.1:
     iconv-lite "^0.4.4"
     sax "^1.2.4"
 
+node-filter-async@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/node-filter-async/-/node-filter-async-1.0.1.tgz#5fdf8fb9f7cedd6fda2900d374241ed659a9aafa"
+  integrity sha512-TZPxjE55hBe/vUaS+Jlwj9qFVTj2YSLRaiLDU/MlYCnLErdPpBFA6ZZwLprghfoPXpsSmVMmCwKUD3HUCnxtgQ==
+
 node-int64@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"

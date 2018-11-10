@@ -1,5 +1,6 @@
 import { default as DataEntry, TypeInfo } from './dataEntry';
 import { throwIfFalsy } from 'throw-if-arg-empty';
+import { filterAsync } from 'node-filter-async';
 
 export default class Task<T> {
   dataList: Array<DataEntry<T>>;
@@ -30,8 +31,12 @@ export default class Task<T> {
   async updateEntriesAsync<K>(fn: (entry: DataEntry<T>) => Promise<DataEntry<K>>): Promise<Task<K>> {
     const promises = this.dataList.map(fn);
     const results = await Promise.all(promises);
-    this.dataList = (results as unknown) as Array<DataEntry<T>>;
-    return (this as unknown) as Task<K>;
+    return this.setDataList(results);
+  }
+
+  async filterEntriesAsync(fn: (entry: DataEntry<T>) => Promise<boolean>): Promise<Task<T>> {
+    this.dataList = await filterAsync(this.dataList, fn);
+    return this;
   }
 
   async mapAsync<K>(fn: (value: T) => Promise<K>): Promise<Task<K>> {
@@ -39,5 +44,14 @@ export default class Task<T> {
       const value = await fn(e.value);
       return e.setValue(value);
     });
+  }
+
+  async filterAsync(fn: (value: T) => Promise<boolean>): Promise<Task<T>> {
+    return await this.filterEntriesAsync(async e => fn(e.value));
+  }
+
+  private setDataList<K>(dataList: Array<DataEntry<K>>): Task<K> {
+    this.dataList = (dataList as unknown) as Array<DataEntry<T>>;
+    return (this as unknown) as Task<K>;
   }
 }

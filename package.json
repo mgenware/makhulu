@@ -41,6 +41,7 @@
     "typescript": "^3.1.6"
   },
   "dependencies": {
+    "node-filter-async": "^1.0.1",
     "throw-if-arg-empty": "^1.0.1"
   }
 }
