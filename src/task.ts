@@ -34,6 +34,10 @@ export default class Task<T> {
     return this.setDataList(results);
   }
 
+  async resetEntriesAsync<K>(fn: (entries: Array<DataEntry<T>>) => Promise<Array<DataEntry<K>>>): Promise<Task<K>> {
+    return this.setDataList(await fn(this.dataList));
+  }
+
   async filterEntriesAsync(fn: (entry: DataEntry<T>) => Promise<boolean>): Promise<Task<T>> {
     this.dataList = await filterAsync(this.dataList, fn);
     return this;

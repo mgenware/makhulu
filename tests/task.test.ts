@@ -62,3 +62,16 @@ test('filterAsync', async () => {
   await t.filterAsync(async v => v % 2 === 0);
   expect(t.values()).toEqual([2]);
 });
+
+test('resetEntriesAsync', async () => {
+  const t = task();
+  const prevEntries = t.dataList;
+  await sleep(300);
+  await t.resetEntriesAsync(async entries => {
+    const copied = [...entries];
+    copied.reverse();
+    return copied;
+  });
+  prevEntries.reverse();
+  expect(t.dataList).toEqual(prevEntries);
+});
