@@ -1,6 +1,6 @@
 {
   "name": "makhulu",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Simple and parallel Node.js task runner",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
