@@ -1,48 +1,46 @@
 {
   "name": "makhulu",
-  "version": "0.0.2",
-  "description": "A smart task runner",
-  "main": "dist/lib/main.js",
-  "types": "dist/lib/main.d.ts",
+  "version": "0.0.1",
+  "description": "<NoDescription>",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
   "author": "Mgen (https://www.mgenware.com)",
-  "homepage": "https://github.com/mgenware/makhulu",
-  "bugs": "https://github.com/mgenware/makhulu/issues",
+  "homepage": "https://github.com/mgenware/layit",
+  "bugs": "https://github.com/mgenware/layit/issues",
   "keywords": [
-    "task runner"
+    "layit"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/mgenware/makhulu.git"
+    "url": "https://github.com/mgenware/layit.git"
   },
   "license": "MIT",
-  "devDependencies": {
-    "@types/globby": "^6.1.0",
-    "@types/mocha": "^2.2.43",
-    "@types/node": "^8.0.29",
-    "copyfiles": "^1.2.0",
-    "mocha": "*",
-    "tslint": "^5.7.0",
-    "typescript": "^2.5.3"
-  },
   "scripts": {
-    "test": "yarn run clean && yarn run compile && yarn run lint && yarn run copy && mocha \"dist/test/*.js\"",
-    "dev_test": "mocha \"dist/test/*.js\"",
+    "test": "yarn run clean && yarn run compile && yarn run lint && yarn run t",
+    "t": "jest",
     "build": "yarn test",
-    "compile": "tsc",
-    "dev": "yarn run clean && tsc -w",
+    "compile": "tsc -b tests",
+    "dev": "yarn run clean && tsc -b tests -w",
     "prepublishOnly": "yarn run test",
-    "lint": "tslint --project .",
-    "copy": "copyfiles \"test/data/**/*.*\" \"dist\"",
-    "clean:dist": "rm -rf dist",
-    "clean": "npm run clean:dist"
+    "lint": "tslint --project tsconfig.json --config tslint.json",
+    "clean": "rimraf dist && rimraf dist_tests"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.9",
+    "@types/node": "^10.12.5",
+    "jest": "^23.6.0",
+    "rimraf": "^2.6.2",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.6"
   },
   "dependencies": {
-    "bluebird": "^3.5.0",
-    "chalk": "^2.1.0",
-    "cli-progress": "^1.6.0",
-    "node-filter-async": "^0.0.4"
+    "throw-if-arg-empty": "^1.0.1"
   }
 }
