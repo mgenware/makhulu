@@ -1,31 +1,12 @@
 import * as mk from '../';
-import { promisify } from 'util';
-import * as fs from 'fs';
-const readFileAsync = promisify(fs.readFile);
-
+import { testFileData, testFileAsync } from './common';
 const FilesDir = './tests/glob-files';
 
-async function testFileAsync(path: string, content: string) {
-  const res = await readFileAsync(path, 'utf8');
-  expect(res).toBe(content);
-}
-
-function compareFileData(a: mk.IData, b: mk.IData): number {
-  return (a[mk.fs.RelativePath] as string).localeCompare(b[mk.fs.RelativePath] as string);
-}
-
-function testFileData(a: object[], b: object[]) {
-  const aCopy = [...a];
-  const bCopy = [...b];
-  aCopy.sort(compareFileData);
-  bCopy.sort(compareFileData);
-  expect(aCopy).toEqual(bCopy);
-}
+mk.DataList.logging = false;
 
 test('src - ** - direct children', async () => {
   const fileData = await mk.fs.src(FilesDir, '*.txt');
-  fileData.disableLogging();
-  testFileData(fileData.list, [
+  testFileData(fileData, [
     {
       [mk.fs.RelativePath]: 'a.txt',
       [mk.fs.SrcPath]: 'tests/glob-files/a.txt',
@@ -39,8 +20,7 @@ test('src - ** - direct children', async () => {
 
 test('src - ** - all children', async () => {
   const fileData = await mk.fs.src(FilesDir, '**/*.txt');
-  fileData.disableLogging();
-  testFileData(fileData.list, [
+  testFileData(fileData, [
     {
       [mk.fs.RelativePath]: 'a.txt',
       [mk.fs.SrcPath]: 'tests/glob-files/a.txt',
@@ -58,8 +38,7 @@ test('src - ** - all children', async () => {
 
 test('src - no glob', async () => {
   const fileData = await mk.fs.src(FilesDir);
-  fileData.disableLogging();
-  testFileData(fileData.list, [
+  testFileData(fileData, [
     {
       [mk.fs.RelativePath]: 'a.txt',
       [mk.fs.SrcPath]: 'tests/glob-files/a.txt',
@@ -81,8 +60,7 @@ test('src - no glob', async () => {
 
 test('src - multiple patterns', async () => {
   const fileData = await mk.fs.src(FilesDir, ['**/*', '!*.json']);
-  fileData.disableLogging();
-  testFileData(fileData.list, [
+  testFileData(fileData, [
     {
       [mk.fs.RelativePath]: 'a.txt',
       [mk.fs.SrcPath]: 'tests/glob-files/a.txt',
@@ -100,9 +78,8 @@ test('src - multiple patterns', async () => {
 
 test('fileToContentString', async () => {
   const fileData = await mk.fs.src(FilesDir, '**/*.txt');
-  fileData.disableLogging();
   await fileData.map('Read files', mk.fs.fileToContentString);
-  testFileData(fileData.list, [
+  testFileData(fileData, [
     {
       [mk.fs.RelativePath]: 'a.txt',
       [mk.fs.SrcPath]: 'tests/glob-files/a.txt',
@@ -123,7 +100,6 @@ test('fileToContentString', async () => {
 
 test('saveToDirectory', async () => {
   const fileData = await mk.fs.src(FilesDir, '**/*.txt');
-  fileData.disableLogging();
   await fileData.map('Read files', mk.fs.fileToContentString);
   await fileData.map('Write files', mk.fs.saveToDirectory('./dist_tests/files/'));
   await testFileAsync('./dist_tests/files/a.txt', 'A\n');

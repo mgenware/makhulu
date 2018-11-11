@@ -1,41 +1,80 @@
 import { filterAsync } from 'node-filter-async';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 
-export interface IData {
-  [key: string]: unknown;
+export class DataMap {
+  static fromEntries(...params: Array<Array<unknown>>): DataMap {
+    const map = new Map<string, unknown>();
+    if (params) {
+      for (const arr of params) {
+        if (!Array.isArray(arr)) {
+          throw new Error(`Argument not an array: ${arr}`);
+        }
+        if (arr.length !== 2) {
+          throw new Error(`Array length should always be 2: ${arr}`);
+        }
+        const [k, v] = arr;
+        map.set(k as string, v);
+      }
+    }
+    return new DataMap(map);
+  }
+
+  map: Map<string, unknown>;
+
+  constructor(map: Map<string, unknown>) {
+    this.map = map || new Map<string, unknown>();
+  }
+
+  get(key: string): unknown {
+    return this.map.get(key);
+  }
+
+  set(key: string, value: unknown): DataMap {
+    this.map.set(key, value);
+    return this;
+  }
+
+  copy(): DataMap {
+    return new DataMap(this.map);
+  }
+
+  toObject(): object {
+    // tslint:disable-next-line no-any
+    const obj: any = {};
+    for (const [key, value] of this.map) {
+      obj[key] = value;
+    }
+    return obj;
+  }
 }
 
-export type MapFn = (entry: IData) => Promise<IData>;
-export type FilterFn = (entry: IData) => Promise<boolean>;
-export type ResetFn = (list: IData[]) => Promise<IData[]>;
+export type MapFn = (entry: DataMap) => Promise<DataMap>;
+export type FilterFn = (entry: DataMap) => Promise<boolean>;
+export type ResetFn = (list: DataMap[]) => Promise<DataMap[]>;
 
 export default class DataList {
-  static all(values: Array<unknown>, type: string): DataList {
+  static logging = true;
+
+  static all(values: Array<unknown>, key: string): DataList {
     if (!values) {
       return new DataList();
     }
-    return new DataList(values.map(v => ({ [type]: v})));
+    return new DataList(values.map(value => DataMap.fromEntries([key, value])));
   }
 
-  list: IData[];
+  list: DataMap[];
   // defaults to -1 (not set)
   prevLength = -1;
-  logging = true;
 
   constructor(
-    list?: IData[],
+    list?: DataMap[],
   ) {
     this.list = list || [];
     this.logRoutines('Creation');
   }
 
   values(key: string): unknown {
-    return this.list.map(d => d[key]);
-  }
-
-  disableLogging(): DataList {
-    this.logging = false;
-    return this;
+    return this.list.map(d => d.get(key));
   }
 
   async map(description: string, fn: MapFn): Promise<DataList> {
@@ -79,7 +118,7 @@ export default class DataList {
   }
 
   private log(msg: string) {
-    if (!this.logging) {
+    if (!DataList.logging) {
       return;
     }
     // tslint:disable-next-line no-console

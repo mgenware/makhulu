@@ -1,7 +1,10 @@
-import { DataList } from '../';
+import { DataList, DataMap } from '../';
+import { testDataList } from './common';
+
+DataList.logging = false;
 
 function task(): DataList {
-  return new DataList([1, 2].map(d => ({ num: d}))).disableLogging();
+  return new DataList([1, 2].map(d => DataMap.fromEntries(['num', d])));
 }
 
 function sleep(ms: number) {
@@ -10,7 +13,7 @@ function sleep(ms: number) {
 
 test('ctor', () => {
   const t = task();
-  expect(t.list).toEqual([
+  testDataList(t, [
     { num: 1 },
     { num: 2 },
   ]);
@@ -18,7 +21,7 @@ test('ctor', () => {
 
 test('all', () => {
   const t = DataList.all([1, 2], 'haha');
-  expect(t.list).toEqual([
+  testDataList(t, [
     { haha: 1 },
     { haha: 2 },
   ]);
@@ -32,14 +35,14 @@ test('values', () => {
 test('map', async () => {
   const t = task();
   await t.map('t', async d => {
-    if ((d.num as number) % 2 === 0) {
+    if ((d.get('num') as number) % 2 === 0) {
       await sleep(300);
     }
-    (d.num as number) += 1;
-    d.changed = true;
+    d.set('num', d.get('num') as number + 1);
+    d.set('changed', true);
     return d;
   });
-  expect(t.list).toEqual([
+  testDataList(t, [
     { num: 2, changed: true },
     { num: 3, changed: true },
   ]);
@@ -61,12 +64,12 @@ test('map with error', async () => {
 test('filter', async () => {
   const t = task();
   await t.filter('t', async d => {
-    if ((d.num as number) % 2 === 0) {
+    if ((d.get('num') as number) % 2 === 0) {
       await sleep(300);
     }
-    return (d.num as number) % 2 === 0;
+    return (d.get('num') as number) % 2 === 0;
   });
-  expect(t.list).toEqual([{ num: 2 }]);
+  testDataList(t, [{ num: 2 }]);
 });
 
 test('reset', async () => {

@@ -1,4 +1,4 @@
-import DataList, { IData, MapFn } from './dataList';
+import DataList, { DataMap, MapFn } from './dataList';
 import * as fastGlob from 'fast-glob';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as nodePath from 'path';
@@ -38,55 +38,48 @@ export default class FS {
       ...options,
       cwd: baseDir,
     });
-    return new DataList((paths as string[]).map(p => ({
-      [FS.RelativePath]: p,
-      [FS.SrcPath]: nodePath.join(baseDir, p),
-    })));
+    return new DataList(
+      (paths as string[]).map(p => DataMap.fromEntries([FS.RelativePath, p], [FS.SrcPath, nodePath.join(baseDir, p)])));
   }
 
-  static async fileToContentString(d: IData): Promise<IData> {
+  static async fileToContentString(d: DataMap): Promise<DataMap> {
     const path = FS.checkSrcPath(d, 'fileToContentString');
     const content = await readFileAsync(path, 'utf8');
-    return {
-      ...d,
-      [FS.FileContent]: content,
-    };
+    return d.set(FS.FileContent, content);
   }
 
   static saveToDirectory(dir: string): MapFn {
     throwIfFalsy(dir, 'dir');
-    return async (d: IData) => {
+    return async (d: DataMap) => {
       const src = FS.checkRelativePath(d, 'saveToDirectory');
       const content = FS.checkFileContent(d, 'saveToDirectory');
       const dest = nodePath.join(dir, src);
 
       await mkdirp(nodePath.dirname(dest));
       await writeFileAsync(dest, content);
-      return {
-        ...d,
-        [FS.DestPath]: dest,
-      } as IData;
+
+      return d.set(FS.DestPath, dest);
     };
   }
 
-  private static checkRelativePath(d: IData, fn: string): string {
-    const path = d[FS.RelativePath] as string;
+  private static checkRelativePath(d: DataMap, fn: string): string {
+    const path = d.get(FS.RelativePath) as string|null;
     if (!path) {
       throw new Error(`${fn}: Relative path not found on data object "${inspect(d)}"`);
     }
     return path;
   }
 
-  private static checkSrcPath(d: IData, fn: string): string {
-    const path = d[FS.SrcPath] as string;
+  private static checkSrcPath(d: DataMap, fn: string): string {
+    const path = d.get(FS.SrcPath) as string|null;
     if (!path) {
       throw new Error(`${fn}: Relative path not found on data object "${inspect(d)}"`);
     }
     return path;
   }
 
-  private static checkFileContent(d: IData, fn: string): string {
-    const path = d[FS.FileContent] as string;
+  private static checkFileContent(d: DataMap, fn: string): string {
+    const path = d.get(FS.FileContent) as string|null;
     if (!path) {
       throw new Error(`${fn}: File content not found on data object "${inspect(d)}"`);
     }
