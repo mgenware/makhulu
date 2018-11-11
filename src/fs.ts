@@ -15,7 +15,7 @@ export default class FS {
   }
 
   static get DestFile(): string {
-    return 'file.dest_path';
+    return 'file.dest_file';
   }
 
   static get FileContent(): string {
