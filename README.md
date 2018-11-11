@@ -16,10 +16,11 @@
 * Import makhulu and start coding
 
 ## Example
+Use the latest uglifyjs to uglify all JS files in `./test_files/`, then merge the results into one single file `merge.js` and save it to `./dist_files`:
 ```ts
 /**
  * Assuming you have installed the following packages:
- * makhulu, uglify-js, @types/uglify-js
+ * makhulu, uglify-js, @types/uglify-js (for TypeScript support)
  */
 import * as mk from 'makhulu';
 import { minify } from 'uglify-js';
@@ -119,7 +120,7 @@ import { minify } from 'uglify-js';
    */
 
   // Call saveToDirectory to save all files to a directory, in this case, only one file called `merged.js` which we created
-  await files.map('Write files', mk.fs.saveToDirectory('./dist_files/uglify-and-merge'));
+  await files.map('Write files', mk.fs.saveToDirectory('./dist_files/uglifyjs-and-merge'));
   await files.forEach('Dest files', mk.fs.printsDestFile);
   /**
    * Now the data list is like:
@@ -128,9 +129,26 @@ import { minify } from 'uglify-js';
    *      SrcDir: './test_files/',
    *      FilePath: 'merged.js',
    *      Content: 'Merged content',
-   *      DestFilePath: './dist_files/uglify-and-merge/merged.js',
+   *      DestFilePath: './dist_files/uglifyjs-and-merge/merged.js',
    *    },
    * ]
    */
 })();
+```
+
+Sample output:
+```
+🚙 Creation
+  LEN: 3
+🚙 Source files
+a.js
+b.js
+subdir/c.js
+🚙 Read files
+🚙 Uglify
+🚙 Merge into one file
+🚙 Write files
+  LEN: 3 -> 1
+🚙 Dest files
+dist_files/uglifyjs-and-merge/bundle.js
 ```
