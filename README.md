@@ -15,7 +15,9 @@
 * Create a new TypeScript file
 * Import makhulu and start coding
 
-## Example
+## Examples
+> More examples at https://github.com/mgenware/makhulu-examples
+
 Use the latest uglifyjs to uglify all JS files in `./test_files/`, then merge the results into one single file `merge.js` and save it to `./dist_files`:
 ```ts
 /**
@@ -152,3 +154,4 @@ subdir/c.js
 🚙 Dest files
 dist_files/uglifyjs-and-merge/bundle.js
 ```
+
