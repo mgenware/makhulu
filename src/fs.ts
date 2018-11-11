@@ -72,7 +72,7 @@ export default class FS {
     log(d.get(FS.RelativeFile) as string);
   }
 
-  static async printsDestPath(d: DataMap): Promise<void> {
+  static async printsDestFile(d: DataMap): Promise<void> {
     log(d.get(FS.DestFile) as string);
   }
 
