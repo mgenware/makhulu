@@ -50,6 +50,7 @@ export class DataMap {
 }
 
 export type MapFn = (entry: DataMap) => Promise<DataMap>;
+export type ForEachFn = (entry: DataMap) => Promise<void>;
 export type FilterFn = (entry: DataMap) => Promise<boolean>;
 export type ResetFn = (list: DataMap[]) => Promise<DataMap[]>;
 
@@ -100,7 +101,7 @@ export default class DataList {
     return this;
   }
 
-  async forEach(description: string, fn: MapFn): Promise<void> {
+  async forEach(description: string, fn: ForEachFn): Promise<void> {
     this.logRoutines(description);
 
     const promises = this.list.map(fn);
