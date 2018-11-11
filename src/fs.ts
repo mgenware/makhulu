@@ -86,7 +86,7 @@ export default class FS {
   private static checkSrcPath(d: DataMap, fn: string): string {
     const path = d.get(FS.SrcPath) as string|null;
     if (!path) {
-      throw new Error(`${fn}: Relative path not found on data object "${inspect(d)}"`);
+      throw new Error(`${fn}: Src path not found on data object "${inspect(d)}"`);
     }
     return path;
   }
