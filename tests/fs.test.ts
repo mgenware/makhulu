@@ -2,7 +2,7 @@ import * as mk from '../';
 import { testFileData, testFileAsync } from './common';
 const FilesDir = './tests/glob-files';
 
-mk.DataList.logging = false;
+mk.setLoggingEnabled(false);
 
 test('src - ** - direct children', async () => {
   const fileData = await mk.fs.src(FilesDir, '*.txt');

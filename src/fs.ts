@@ -4,6 +4,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as nodePath from 'path';
 import * as mkdirp from 'make-dir';
 import { promisify, inspect } from 'util';
+import log from './log';
 import * as fs from 'fs';
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
@@ -60,6 +61,18 @@ export default class FS {
 
       return d.set(FS.DestPath, dest);
     };
+  }
+
+  static async printsRelativePath(d: DataMap): Promise<void> {
+    log(d.get(FS.RelativePath) as string);
+  }
+
+  static async printsDestPath(d: DataMap): Promise<void> {
+    log(d.get(FS.DestPath) as string);
+  }
+
+  static async printsSrcPath(d: DataMap): Promise<void> {
+    log(d.get(FS.SrcPath) as string);
   }
 
   private static checkRelativePath(d: DataMap, fn: string): string {

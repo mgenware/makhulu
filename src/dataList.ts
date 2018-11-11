@@ -1,5 +1,6 @@
 import { filterAsync } from 'node-filter-async';
 import { throwIfFalsy } from 'throw-if-arg-empty';
+import log from './log';
 
 export class DataMap {
   static fromEntries(...params: Array<Array<unknown>>): DataMap {
@@ -99,6 +100,13 @@ export default class DataList {
     return this;
   }
 
+  async forEach(description: string, fn: MapFn): Promise<void> {
+    this.logRoutines(description);
+
+    const promises = this.list.map(fn);
+    await Promise.all(promises);
+  }
+
   private logRoutines(description: string) {
     throwIfFalsy(description, 'description');
     this.logTitle(description);
@@ -106,22 +114,14 @@ export default class DataList {
   }
 
   private logTitle(title: string) {
-    this.log(`🚙 ${title}`);
+    log(`🚙 ${title}`);
   }
 
   private logLengthIfNeeded() {
     if (this.prevLength !== this.list.length) {
       const msg = this.prevLength >= 0 ? `${this.prevLength} -> ${this.list.length}` : `${this.list.length}`;
-      this.log(`  LEN: ${msg}`);
+      log(`  LEN: ${msg}`);
       this.prevLength = this.list.length;
     }
-  }
-
-  private log(msg: string) {
-    if (!DataList.logging) {
-      return;
-    }
-    // tslint:disable-next-line no-console
-    console.log(msg);
   }
 }

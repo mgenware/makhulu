@@ -1,7 +1,7 @@
-import { DataList, DataMap } from '../';
+import { DataList, DataMap, setLoggingEnabled } from '../';
 import { testDataList } from './common';
 
-DataList.logging = false;
+setLoggingEnabled(false);
 
 function task(): DataList {
   return new DataList([1, 2].map(d => DataMap.fromEntries(['num', d])));
