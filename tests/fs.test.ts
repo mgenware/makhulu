@@ -8,12 +8,12 @@ test('src - ** - direct children', async () => {
   const fileData = await mk.fs.src(FilesDir, '*.txt');
   testFileData(fileData, [
     {
-      [mk.fs.RelativePath]: 'a.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/a.txt',
+      [mk.fs.RelativeFile]: 'a.txt',
+      [mk.fs.SrcDir]: FilesDir,
     },
     {
-      [mk.fs.RelativePath]: 'c.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/c.txt',
+      [mk.fs.RelativeFile]: 'c.txt',
+      [mk.fs.SrcDir]: FilesDir,
     },
   ]);
 });
@@ -22,16 +22,16 @@ test('src - ** - all children', async () => {
   const fileData = await mk.fs.src(FilesDir, '**/*.txt');
   testFileData(fileData, [
     {
-      [mk.fs.RelativePath]: 'a.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/a.txt',
+      [mk.fs.RelativeFile]: 'a.txt',
+      [mk.fs.SrcDir]: FilesDir,
     },
     {
-      [mk.fs.RelativePath]: 'c.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/c.txt',
+      [mk.fs.RelativeFile]: 'c.txt',
+      [mk.fs.SrcDir]: FilesDir,
     },
     {
-      [mk.fs.RelativePath]: 'sub/d.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/sub/d.txt',
+      [mk.fs.RelativeFile]: 'sub/d.txt',
+      [mk.fs.SrcDir]: FilesDir,
     },
   ]);
 });
@@ -40,20 +40,20 @@ test('src - no glob', async () => {
   const fileData = await mk.fs.src(FilesDir);
   testFileData(fileData, [
     {
-      [mk.fs.RelativePath]: 'a.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/a.txt',
+      [mk.fs.RelativeFile]: 'a.txt',
+      [mk.fs.SrcDir]: FilesDir,
     },
     {
-      [mk.fs.RelativePath]: 'c.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/c.txt',
+      [mk.fs.RelativeFile]: 'c.txt',
+      [mk.fs.SrcDir]: FilesDir,
     },
     {
-      [mk.fs.RelativePath]: 'sub/d.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/sub/d.txt',
+      [mk.fs.RelativeFile]: 'sub/d.txt',
+      [mk.fs.SrcDir]: FilesDir,
     },
     {
-      [mk.fs.RelativePath]: 'b.json',
-      [mk.fs.SrcPath]: 'tests/glob-files/b.json',
+      [mk.fs.RelativeFile]: 'b.json',
+      [mk.fs.SrcDir]: FilesDir,
     },
   ]);
 });
@@ -62,16 +62,16 @@ test('src - multiple patterns', async () => {
   const fileData = await mk.fs.src(FilesDir, ['**/*', '!*.json']);
   testFileData(fileData, [
     {
-      [mk.fs.RelativePath]: 'a.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/a.txt',
+      [mk.fs.RelativeFile]: 'a.txt',
+      [mk.fs.SrcDir]: FilesDir,
     },
     {
-      [mk.fs.RelativePath]: 'c.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/c.txt',
+      [mk.fs.RelativeFile]: 'c.txt',
+      [mk.fs.SrcDir]: FilesDir,
     },
     {
-      [mk.fs.RelativePath]: 'sub/d.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/sub/d.txt',
+      [mk.fs.RelativeFile]: 'sub/d.txt',
+      [mk.fs.SrcDir]: FilesDir,
     },
   ]);
 });
@@ -81,18 +81,18 @@ test('fileToContentString', async () => {
   await fileData.map('Read files', mk.fs.fileToContentString);
   testFileData(fileData, [
     {
-      [mk.fs.RelativePath]: 'a.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/a.txt',
+      [mk.fs.RelativeFile]: 'a.txt',
+      [mk.fs.SrcDir]: FilesDir,
       [mk.fs.FileContent]: 'A\n',
     },
     {
-      [mk.fs.RelativePath]: 'c.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/c.txt',
+      [mk.fs.RelativeFile]: 'c.txt',
+      [mk.fs.SrcDir]: FilesDir,
       [mk.fs.FileContent]: 'C\n',
     },
     {
-      [mk.fs.RelativePath]: 'sub/d.txt',
-      [mk.fs.SrcPath]: 'tests/glob-files/sub/d.txt',
+      [mk.fs.RelativeFile]: 'sub/d.txt',
+      [mk.fs.SrcDir]: FilesDir,
       [mk.fs.FileContent]: 'D\n',
     },
   ]);

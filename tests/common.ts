@@ -14,7 +14,7 @@ export async function testFileAsync(path: string, content: string) {
 
 // tslint:disable-next-line no-any
 export function compareFileData(a: any, b: any): number {
-  return (a[mk.fs.RelativePath] as string).localeCompare(b[mk.fs.RelativePath] as string);
+  return (a[mk.fs.RelativeFile] as string).localeCompare(b[mk.fs.RelativeFile] as string);
 }
 
 export function testFileData(a: mk.DataList, b: object[]) {

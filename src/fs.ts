@@ -10,20 +10,20 @@ const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
 
 export default class FS {
-  static get RelativePath(): string {
-    return 'file.path.relative';
+  static get RelativeFile(): string {
+    return 'file.relative_file';
   }
 
-  static get SrcPath(): string {
-    return 'file.path.src';
-  }
-
-  static get DestPath(): string {
-    return 'file.path.dest';
+  static get DestFile(): string {
+    return 'file.dest_path';
   }
 
   static get FileContent(): string {
     return 'file.content';
+  }
+
+  static get SrcDir(): string {
+    return 'file.src_dir';
   }
 
   static async src(baseDir: string, patterns?: string | string[], options?: object): Promise<DataList> {
@@ -40,11 +40,16 @@ export default class FS {
       cwd: baseDir,
     });
     return new DataList(
-      (paths as string[]).map(p => DataMap.fromEntries([FS.RelativePath, p], [FS.SrcPath, nodePath.join(baseDir, p)])));
+      (paths as string[]).map(p => {
+        return DataMap.fromEntries(
+          [FS.RelativeFile, p],
+          [FS.SrcDir, baseDir],
+        );
+      }));
   }
 
   static async fileToContentString(d: DataMap): Promise<DataMap> {
-    const path = FS.checkSrcPath(d, 'fileToContentString');
+    const path = FS.getSrcFile(d, 'fileToContentString');
     const content = await readFileAsync(path, 'utf8');
     return d.set(FS.FileContent, content);
   }
@@ -52,41 +57,44 @@ export default class FS {
   static saveToDirectory(dir: string): MapFn {
     throwIfFalsy(dir, 'dir');
     return async (d: DataMap) => {
-      const src = FS.checkRelativePath(d, 'saveToDirectory');
+      const src = FS.checkRelativeFile(d, 'saveToDirectory');
       const content = FS.checkFileContent(d, 'saveToDirectory');
       const dest = nodePath.join(dir, src);
 
       await mkdirp(nodePath.dirname(dest));
       await writeFileAsync(dest, content);
 
-      return d.set(FS.DestPath, dest);
+      return d.set(FS.DestFile, dest);
     };
   }
 
-  static async printsRelativePath(d: DataMap): Promise<void> {
-    log(d.get(FS.RelativePath) as string);
+  static async printsRelativeFile(d: DataMap): Promise<void> {
+    log(d.get(FS.RelativeFile) as string);
   }
 
   static async printsDestPath(d: DataMap): Promise<void> {
-    log(d.get(FS.DestPath) as string);
+    log(d.get(FS.DestFile) as string);
   }
 
-  static async printsSrcPath(d: DataMap): Promise<void> {
-    log(d.get(FS.SrcPath) as string);
+  static getSrcFile(map: DataMap, description: string): string {
+    const relativePath = FS.checkRelativeFile(map, description);
+    const srcDir = FS.checkSrcDir(map, description);
+    const srcFile = nodePath.join(srcDir, relativePath);
+    return srcFile;
   }
 
-  private static checkRelativePath(d: DataMap, fn: string): string {
-    const path = d.get(FS.RelativePath) as string|null;
+  private static checkRelativeFile(d: DataMap, fn: string): string {
+    const path = d.get(FS.RelativeFile) as string|null;
     if (!path) {
       throw new Error(`${fn}: Relative path not found on data object "${inspect(d)}"`);
     }
     return path;
   }
 
-  private static checkSrcPath(d: DataMap, fn: string): string {
-    const path = d.get(FS.SrcPath) as string|null;
+  private static checkSrcDir(d: DataMap, fn: string): string {
+    const path = d.get(FS.SrcDir) as string|null;
     if (!path) {
-      throw new Error(`${fn}: Src path not found on data object "${inspect(d)}"`);
+      throw new Error(`${fn}: Src dir not found on data object "${inspect(d)}"`);
     }
     return path;
   }
