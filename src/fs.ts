@@ -41,10 +41,10 @@ export default class FS {
     });
     return new DataList(
       (paths as string[]).map(p => {
-        return DataObject.fromEntries(
+        return DataObject.fromEntries([
           [FS.RelativeFile, p],
           [FS.SrcDir, baseDir],
-        );
+        ]);
       }));
   }
 

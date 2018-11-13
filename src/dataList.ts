@@ -3,7 +3,7 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import log from './log';
 
 export class DataObject {
-  static fromEntries(...params: Array<Array<unknown>>): DataObject {
+  static fromEntries(params: Array<Array<unknown>>): DataObject {
     const map = new Map<string, unknown>();
     if (params) {
       for (const arr of params) {
@@ -61,7 +61,7 @@ export default class DataList {
     if (!values) {
       return new DataList();
     }
-    return new DataList(values.map(value => DataObject.fromEntries([key, value])));
+    return new DataList(values.map(value => DataObject.fromEntries([[key, value]])));
   }
 
   list: DataObject[];
