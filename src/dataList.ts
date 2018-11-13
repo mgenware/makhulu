@@ -76,10 +76,12 @@ export default class DataList {
   }
 
   values(key: string): unknown {
+    throwIfFalsy(key, 'key');
     return this.list.map(d => d.get(key));
   }
 
   async map(description: string, fn: MapFn): Promise<DataList> {
+    throwIfFalsy(fn, 'fn');
     this.logRoutines(description);
 
     const promises = this.list.map(fn);
@@ -88,6 +90,7 @@ export default class DataList {
   }
 
   async reset(description: string, fn: ResetFn): Promise<DataList> {
+    throwIfFalsy(fn, 'fn');
     this.logRoutines(description);
 
     this.list = await fn(this.list);
@@ -95,6 +98,7 @@ export default class DataList {
   }
 
   async filter(description: string, fn: FilterFn): Promise<DataList> {
+    throwIfFalsy(fn, 'fn');
     this.logRoutines(description);
 
     this.list = await filterAsync(this.list, fn);
@@ -102,6 +106,7 @@ export default class DataList {
   }
 
   async forEach(description: string, fn: ForEachFn): Promise<void> {
+    throwIfFalsy(fn, 'fn');
     this.logRoutines(description);
 
     const promises = this.list.map(fn);
