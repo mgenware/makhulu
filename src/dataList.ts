@@ -2,8 +2,8 @@ import { filterAsync } from 'node-filter-async';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import log from './log';
 
-export class DataMap {
-  static fromEntries(...params: Array<Array<unknown>>): DataMap {
+export class DataObject {
+  static fromEntries(...params: Array<Array<unknown>>): DataObject {
     const map = new Map<string, unknown>();
     if (params) {
       for (const arr of params) {
@@ -17,7 +17,7 @@ export class DataMap {
         map.set(k as string, v);
       }
     }
-    return new DataMap(map);
+    return new DataObject(map);
   }
 
   map: Map<string, unknown>;
@@ -30,13 +30,13 @@ export class DataMap {
     return this.map.get(key);
   }
 
-  set(key: string, value: unknown): DataMap {
+  set(key: string, value: unknown): DataObject {
     this.map.set(key, value);
     return this;
   }
 
-  copy(): DataMap {
-    return new DataMap(this.map);
+  copy(): DataObject {
+    return new DataObject(this.map);
   }
 
   toObject(): object {
@@ -49,10 +49,10 @@ export class DataMap {
   }
 }
 
-export type MapFn = (entry: DataMap) => Promise<DataMap>;
-export type ForEachFn = (entry: DataMap) => Promise<void>;
-export type FilterFn = (entry: DataMap) => Promise<boolean>;
-export type ResetFn = (list: DataMap[]) => Promise<DataMap[]>;
+export type MapFn = (entry: DataObject) => Promise<DataObject>;
+export type ForEachFn = (entry: DataObject) => Promise<void>;
+export type FilterFn = (entry: DataObject) => Promise<boolean>;
+export type ResetFn = (list: DataObject[]) => Promise<DataObject[]>;
 
 export default class DataList {
   static logging = true;
@@ -61,15 +61,15 @@ export default class DataList {
     if (!values) {
       return new DataList();
     }
-    return new DataList(values.map(value => DataMap.fromEntries([key, value])));
+    return new DataList(values.map(value => DataObject.fromEntries([key, value])));
   }
 
-  list: DataMap[];
+  list: DataObject[];
   // defaults to -1 (not set)
   prevLength = -1;
 
   constructor(
-    list?: DataMap[],
+    list?: DataObject[],
   ) {
     this.list = list || [];
     this.logRoutines('Creation');

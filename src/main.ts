@@ -1,4 +1,4 @@
-export { default as DataList, DataMap } from './dataList';
+export { default as DataList, DataObject } from './dataList';
 export { default as fs } from './fs';
 export { setLoggingEnabled } from './log';
 

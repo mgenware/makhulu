@@ -94,7 +94,7 @@ import { minify } from 'uglify-js';
    * ]
    */
 
-  // Another example of modify the content, we merge all the content of previous files into one, and manually creates the DataMap
+  // Another example of modify the content, we merge all the content of previous files into one, and manually creates the DataObject
   await files.reset('Merge into one file', async dataList => {
     // set merged file as "bundle.js"
     const destPath = 'bundle.js';
@@ -103,8 +103,8 @@ import { minify } from 'uglify-js';
     dataList.forEach(d => {
       content += d.get(mk.fs.FileContent) as string;
     });
-    // create new DataMap
-    return [mk.DataMap.fromEntries(
+    // create new DataObject
+    return [mk.DataObject.fromEntries(
       [mk.fs.SrcDir, srcDir],
       [mk.fs.RelativeFile, destPath],
       [mk.fs.FileContent, content],

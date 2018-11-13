@@ -1,10 +1,10 @@
-import { DataList, DataMap, setLoggingEnabled } from '../';
+import { DataList, DataObject, setLoggingEnabled } from '../';
 import { testDataList } from './common';
 
 setLoggingEnabled(false);
 
 function task(): DataList {
-  return new DataList([1, 2].map(d => DataMap.fromEntries(['num', d])));
+  return new DataList([1, 2].map(d => DataObject.fromEntries(['num', d])));
 }
 
 function sleep(ms: number) {
