@@ -22,7 +22,7 @@ Use the latest uglifyjs to uglify all JS files in `./test_files/`, then merge th
 ```ts
 /**
  * Assuming you have installed the following packages:
- * makhulu, uglify-js, @types/uglify-js (for TypeScript support)
+ * makhulu, uglify-js, @types/uglify-js
  */
 import * as mk from 'makhulu';
 import { minify } from 'uglify-js';
@@ -104,11 +104,12 @@ import { minify } from 'uglify-js';
       content += d.get(mk.fs.FileContent) as string;
     });
     // create new DataObject
-    return [mk.DataObject.fromEntries(
+    const bundleFileObject = mk.DataObject.fromEntries([
       [mk.fs.SrcDir, srcDir],
       [mk.fs.RelativeFile, destPath],
       [mk.fs.FileContent, content],
-    )];
+    ]);
+    return [bundleFileObject];
   });
   /**
    * Now the data list is like:

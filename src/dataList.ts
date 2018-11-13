@@ -49,10 +49,10 @@ export class DataObject {
   }
 }
 
-export type MapFn = (entry: DataObject) => Promise<DataObject>;
-export type ForEachFn = (entry: DataObject) => Promise<void>;
-export type FilterFn = (entry: DataObject) => Promise<boolean>;
-export type ResetFn = (list: DataObject[]) => Promise<DataObject[]>;
+export type MapFn = (obj: DataObject) => Promise<DataObject>;
+export type ForEachFn = (obj: DataObject) => Promise<void>;
+export type FilterFn = (obj: DataObject) => Promise<boolean>;
+export type ResetFn = (objs: DataObject[]) => Promise<DataObject[]>;
 
 export default class DataList {
   static logging = true;
