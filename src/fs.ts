@@ -48,17 +48,17 @@ export default class FS {
       }));
   }
 
-  static async fileToContentString(d: DataObject): Promise<DataObject> {
-    const path = FS.getSrcFile(d, 'fileToContentString');
+  static async readToString(d: DataObject): Promise<DataObject> {
+    const path = FS.getSrcFile(d, 'readToString');
     const content = await readFileAsync(path, 'utf8');
     return d.set(FS.FileContent, content);
   }
 
-  static saveToDirectory(dir: string): MapFn {
+  static writeToDirectory(dir: string): MapFn {
     throwIfFalsy(dir, 'dir');
     return async (d: DataObject) => {
-      const src = FS.checkRelativeFile(d, 'saveToDirectory');
-      const content = FS.checkFileContent(d, 'saveToDirectory');
+      const src = FS.checkRelativeFile(d, 'writeToDirectory');
+      const content = FS.checkFileContent(d, 'writeToDirectory');
       const dest = nodePath.join(dir, src);
 
       await mkdirp(nodePath.dirname(dest));

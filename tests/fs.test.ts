@@ -78,7 +78,7 @@ test('src - multiple patterns', async () => {
 
 test('fileToContentString', async () => {
   const fileData = await mk.fs.src(FilesDir, '**/*.txt');
-  await fileData.map('Read files', mk.fs.fileToContentString);
+  await fileData.map('Read files', mk.fs.readToString);
   testFileData(fileData, [
     {
       [mk.fs.RelativeFile]: 'a.txt',
@@ -100,7 +100,7 @@ test('fileToContentString', async () => {
 
 test('saveToDirectory', async () => {
   const fileData = await mk.fs.src(FilesDir, '**/*.txt');
-  await fileData.map('Read files', mk.fs.fileToContentString);
-  await fileData.map('Write files', mk.fs.saveToDirectory('./dist_tests/files/'));
+  await fileData.map('Read files', mk.fs.readToString);
+  await fileData.map('Write files', mk.fs.writeToDirectory('./dist_tests/files/'));
   await testFileAsync('./dist_tests/files/a.txt', 'A\n');
 });
