@@ -26,6 +26,7 @@ Use the latest uglifyjs to uglify all JS files in `./test_files/`, then merge th
  */
 import * as mk from 'makhulu';
 import { minify } from 'uglify-js';
+import * as nodepath from 'path';
 
 (async () => {
   const srcDir = './test_files/';
@@ -49,8 +50,8 @@ import { minify } from 'uglify-js';
   // Prints src file paths using printsRelativeFile
   await files.forEach('Source files', mk.fs.printsRelativeFile);
 
-  // Read file content, and now data list also contains file content data
-  await files.map('Read files', mk.fs.fileToContentString);
+  // Read file paths to string contents, now data list contains file content data
+  await files.map('Read files', mk.fs.readToString);
   /**
    * Now the data list is like (note that this only adds attributes to the target data map, all previous attributes are preserved):
    * [
@@ -68,7 +69,7 @@ import { minify } from 'uglify-js';
    * ]
    */
 
-  // You can modify the content as whatever you want, e.g. uglify the content
+  // You can modify the content to whatever you want, e.g. uglify the content
   await files.map('Uglify', async data => {
     const content = data.get(mk.fs.FileContent) as string;
     const uglifyRes = minify(content);
@@ -122,8 +123,8 @@ import { minify } from 'uglify-js';
    * ]
    */
 
-  // Call saveToDirectory to save all files to a directory, in this case, only one file called `merged.js` which we created
-  await files.map('Write files', mk.fs.saveToDirectory('./dist_files/uglifyjs-and-merge'));
+  // Call writeToDirectory to save all files to a directory, in this case, only one file called `merged.js` which we created
+  await files.map('Write files', mk.fs.writeToDirectory(`./dist_files/${nodepath.basename(__dirname)}`));
   await files.forEach('Dest files', mk.fs.printsDestFile);
   /**
    * Now the data list is like:
