@@ -126,6 +126,16 @@ test('writeToDirectory (change content)', async () => {
   await testFileAsync(`${dest}/sub/d.txt`, '*D\n');
 });
 
+test('writeToDirectory (null content)', async () => {
+  const dest = './dist_tests/files/_';
+  const files = await mk.fs.src(FilesDir, 'empty.bin');
+  await files.map('Read files', mk.fs.readToString);
+  await files.map('Update files', async d => {
+    return d.set(mk.fs.FileContent, null);
+  });
+  await expect(files.map('Write files', mk.fs.writeToDirectory(dest))).rejects.toThrow('writeToDirectory: File content not found on data object');
+});
+
 test('writeToDirectory (empty file)', async () => {
   const dest = './dist_tests/files/empty_file';
   const files = await mk.fs.src(FilesDir, 'empty.bin');
