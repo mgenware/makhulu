@@ -5,8 +5,8 @@ const FilesDir = './tests/glob-files';
 mk.setLoggingEnabled(false);
 
 test('src - ** - direct children', async () => {
-  const fileData = await mk.fs.src(FilesDir, '*.txt');
-  testFileData(fileData, [
+  const files = await mk.fs.src(FilesDir, '*.txt');
+  testFileData(files, [
     {
       [mk.fs.RelativeFile]: 'a.txt',
       [mk.fs.SrcDir]: FilesDir,
@@ -19,8 +19,8 @@ test('src - ** - direct children', async () => {
 });
 
 test('src - ** - all children', async () => {
-  const fileData = await mk.fs.src(FilesDir, '**/*.txt');
-  testFileData(fileData, [
+  const files = await mk.fs.src(FilesDir, '**/*.txt');
+  testFileData(files, [
     {
       [mk.fs.RelativeFile]: 'a.txt',
       [mk.fs.SrcDir]: FilesDir,
@@ -37,8 +37,8 @@ test('src - ** - all children', async () => {
 });
 
 test('src - no glob', async () => {
-  const fileData = await mk.fs.src(FilesDir);
-  testFileData(fileData, [
+  const files = await mk.fs.src(FilesDir);
+  testFileData(files, [
     {
       [mk.fs.RelativeFile]: 'a.txt',
       [mk.fs.SrcDir]: FilesDir,
@@ -55,12 +55,16 @@ test('src - no glob', async () => {
       [mk.fs.RelativeFile]: 'b.json',
       [mk.fs.SrcDir]: FilesDir,
     },
+    {
+      [mk.fs.RelativeFile]: 'empty.bin',
+      [mk.fs.SrcDir]: FilesDir,
+    },
   ]);
 });
 
 test('src - multiple patterns', async () => {
-  const fileData = await mk.fs.src(FilesDir, ['**/*', '!*.json']);
-  testFileData(fileData, [
+  const files = await mk.fs.src(FilesDir, ['**/*', '!*.json', '!empty.bin']);
+  testFileData(files, [
     {
       [mk.fs.RelativeFile]: 'a.txt',
       [mk.fs.SrcDir]: FilesDir,
@@ -76,10 +80,10 @@ test('src - multiple patterns', async () => {
   ]);
 });
 
-test('fileToContentString', async () => {
-  const fileData = await mk.fs.src(FilesDir, '**/*.txt');
-  await fileData.map('Read files', mk.fs.readToString);
-  testFileData(fileData, [
+test('readToString', async () => {
+  const files = await mk.fs.src(FilesDir, '**/*.txt');
+  await files.map('Read files', mk.fs.readToString);
+  testFileData(files, [
     {
       [mk.fs.RelativeFile]: 'a.txt',
       [mk.fs.SrcDir]: FilesDir,
@@ -98,9 +102,34 @@ test('fileToContentString', async () => {
   ]);
 });
 
-test('saveToDirectory', async () => {
-  const fileData = await mk.fs.src(FilesDir, '**/*.txt');
-  await fileData.map('Read files', mk.fs.readToString);
-  await fileData.map('Write files', mk.fs.writeToDirectory('./dist_tests/files/'));
-  await testFileAsync('./dist_tests/files/a.txt', 'A\n');
+test('writeToDirectory', async () => {
+  const dest = './dist_tests/files/copy';
+  const files = await mk.fs.src(FilesDir, '**/*.txt');
+  await files.map('Read files', mk.fs.readToString);
+  await files.map('Write files', mk.fs.writeToDirectory(dest));
+  await testFileAsync(`${dest}/a.txt`, 'A\n');
+  await testFileAsync(`${dest}/c.txt`, 'C\n');
+  await testFileAsync(`${dest}/sub/d.txt`, 'D\n');
+});
+
+test('writeToDirectory (change content)', async () => {
+  const dest = './dist_tests/files/mod';
+  const files = await mk.fs.src(FilesDir, '**/*.txt');
+  await files.map('Read files', mk.fs.readToString);
+  await files.map('Update files', async d => {
+    const content = d.get(mk.fs.FileContent) as string;
+    return d.set(mk.fs.FileContent, '*' + content);
+  });
+  await files.map('Write files', mk.fs.writeToDirectory(dest));
+  await testFileAsync(`${dest}/a.txt`, '*A\n');
+  await testFileAsync(`${dest}/c.txt`, '*C\n');
+  await testFileAsync(`${dest}/sub/d.txt`, '*D\n');
+});
+
+test('writeToDirectory (empty file)', async () => {
+  const dest = './dist_tests/files/empty_file';
+  const files = await mk.fs.src(FilesDir, 'empty.bin');
+  await files.map('Read files', mk.fs.readToString);
+  await files.map('Write files', mk.fs.writeToDirectory(dest));
+  await testFileAsync(`${dest}/empty.bin`, '');
 });
