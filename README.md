@@ -157,3 +157,11 @@ subdir/c.js
 dist_files/uglifyjs-and-merge/bundle.js
 ```
 
+## Common Errors
+
+### File content not found on data object
+This is because `DataObject.get(FS.FileContent)` returns `null` or `undefined`, possible reasons:
+* You accidentally set this value to `null` or `undefined`, if you want to write to an empty file, set it to an empty string (`''`), or if you want to remove this file, use `DataList.filter` or `DataList.reset` instead.
+
+### Relative path not found on data object
+`writeToDirectory` cannot locate the source path of a file, you forgot to call `fs.src` before `writeToDirectory`?
