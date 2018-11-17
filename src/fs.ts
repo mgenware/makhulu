@@ -100,7 +100,7 @@ export default class FS {
   }
 
   private static checkFileContent(d: DataObject, fn: string): string {
-    const content = d.get(FS.FileContent) as string|null;
+    const content = d.get(FS.FileContent) as string|null|undefined;
     // Empty content is permitted, so here we only check undefined/null
     if (content === undefined || content === null) {
       throw new Error(`${fn}: File content not found on data object "${inspect(d)}"`);
