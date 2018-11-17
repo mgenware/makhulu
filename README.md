@@ -5,6 +5,8 @@
 [![npm version](https://img.shields.io/npm/v/makhulu.svg?style=flat-square)](https://npmjs.com/package/makhulu)
 [![Node.js Version](http://img.shields.io/node/v/makhulu.svg?style=flat-square)](https://nodejs.org/en/)
 
+<img width="150" height="192" src="makhulu.jpg" alt="ky">
+
 🦁 Simple and parallel Node.js task runner
 * Parallel, all functions are written in async
 * Simple, no need to write plugins/wrappers, do everything in plain TypeScript
