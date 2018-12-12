@@ -10,7 +10,7 @@
 🦁 Simple and parallel Node.js task runner
 * Parallel, all functions are written in async
 * Simple, no need to write plugins/wrappers, do everything in plain TypeScript
-* Strong, supports TypeScript out of the box
+* Strongly typed, supports TypeScript out of the box
 
 ## Getting started
 * Install makhulu `yarn add makhulu`
