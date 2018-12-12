@@ -1,5 +1,6 @@
 import { filterAsync } from 'node-filter-async';
 import { throwIfFalsy } from 'throw-if-arg-empty';
+import * as colors from 'ansi-colors';
 import log from './log';
 
 export class DataObject {
@@ -61,16 +62,16 @@ export default class DataList {
     if (!values) {
       return new DataList();
     }
-    return new DataList(values.map(value => DataObject.fromEntries([[key, value]])));
+    return new DataList(
+      values.map(value => DataObject.fromEntries([[key, value]])),
+    );
   }
 
   list: DataObject[];
   // defaults to -1 (not set)
   prevLength = -1;
 
-  constructor(
-    list?: DataObject[],
-  ) {
+  constructor(list?: DataObject[]) {
     this.list = list || [];
     this.logRoutines('Creation');
   }
@@ -120,13 +121,16 @@ export default class DataList {
   }
 
   private logTitle(title: string) {
-    log(`🚙 ${title}`);
+    log(colors.cyan(`🚙 ${title}`));
   }
 
   private logLengthIfNeeded() {
     if (this.prevLength !== this.list.length) {
-      const msg = this.prevLength >= 0 ? `${this.prevLength} -> ${this.list.length}` : `${this.list.length}`;
-      log(`  LEN: ${msg}`);
+      const msg =
+        this.prevLength >= 0
+          ? `${this.prevLength} -> ${this.list.length}`
+          : `${this.list.length}`;
+      log(colors.yellow(`  >> ${msg}`));
       this.prevLength = this.list.length;
     }
   }
