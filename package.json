@@ -33,13 +33,13 @@
     "trailingComma": "all"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.9",
+    "@types/jest": "^23.3.10",
     "@types/make-dir": "^1.0.3",
-    "@types/node": "^10.12.9",
+    "@types/node": "^10.12.12",
     "jest": "^23.6.0",
     "rimraf": "^2.6.2",
     "tslint": "^5.11.0",
-    "typescript": "^3.1.6"
+    "typescript": "^3.2.2"
   },
   "dependencies": {
     "fast-glob": "^2.2.4",
