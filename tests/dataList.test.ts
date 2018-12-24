@@ -1,10 +1,10 @@
-import { DataList, DataObject, setLoggingEnabled } from '../';
+import { DataList, setLoggingEnabled } from '../';
 import { testDataList } from './common';
 
 setLoggingEnabled(false);
 
 function task(): DataList {
-  return new DataList([1, 2].map(d => DataObject.fromEntries([['num', d]])));
+  return new DataList([1, 2].map(d => ({ num: d })));
 }
 
 function sleep(ms: number) {
@@ -13,18 +13,12 @@ function sleep(ms: number) {
 
 test('ctor', () => {
   const t = task();
-  testDataList(t, [
-    { num: 1 },
-    { num: 2 },
-  ]);
+  testDataList(t, [{ num: 1 }, { num: 2 }]);
 });
 
 test('all', () => {
   const t = DataList.all([1, 2], 'haha');
-  testDataList(t, [
-    { haha: 1 },
-    { haha: 2 },
-  ]);
+  testDataList(t, [{ haha: 1 }, { haha: 2 }]);
 });
 
 test('values', () => {
@@ -35,17 +29,14 @@ test('values', () => {
 test('map', async () => {
   const t = task();
   await t.map('t', async d => {
-    if ((d.get('num') as number) % 2 === 0) {
+    if ((d.num as number) % 2 === 0) {
       await sleep(300);
     }
-    d.set('num', d.get('num') as number + 1);
-    d.set('changed', true);
+    (d.num as number) += 1;
+    d.changed = true;
     return d;
   });
-  testDataList(t, [
-    { num: 2, changed: true },
-    { num: 3, changed: true },
-  ]);
+  testDataList(t, [{ num: 2, changed: true }, { num: 3, changed: true }]);
 });
 
 test('map with error', async () => {
@@ -64,10 +55,10 @@ test('map with error', async () => {
 test('filter', async () => {
   const t = task();
   await t.filter('t', async d => {
-    if ((d.get('num') as number) % 2 === 0) {
+    if ((d.num as number) % 2 === 0) {
       await sleep(300);
     }
-    return (d.get('num') as number) % 2 === 0;
+    return (d.num as number) % 2 === 0;
   });
   testDataList(t, [{ num: 2 }]);
 });

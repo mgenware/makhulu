@@ -26,10 +26,16 @@ export default class FS {
     return 'file.src_dir';
   }
 
-  static async src(baseDir: string, patterns?: string | string[], options?: object): Promise<DataList> {
+  static async src(
+    baseDir: string,
+    patterns?: string | string[],
+    options?: object,
+  ): Promise<DataList> {
     throwIfFalsy(baseDir, 'baseDir');
     if (baseDir.includes('*') || baseDir.includes('?')) {
-      throw new Error(`"baseDir" looks like a glob, please specify "baseDir" as a valid file path and only use glob in the second "pattern" parameter, "baseDir" value: "${baseDir}"`);
+      throw new Error(
+        `"baseDir" looks like a glob, please specify "baseDir" as a valid file path and only use glob in the second "pattern" parameter, "baseDir" value: "${baseDir}"`,
+      );
     }
 
     if (!patterns || (Array.isArray(patterns) && patterns.length === 0)) {
@@ -40,18 +46,18 @@ export default class FS {
       cwd: baseDir,
     });
     return new DataList(
-      (paths as string[]).map(p => {
-        return DataObject.fromEntries([
-          [FS.RelativeFile, p],
-          [FS.SrcDir, baseDir],
-        ]);
-      }));
+      (paths as string[]).map(p => ({
+        [FS.RelativeFile]: p,
+        [FS.SrcDir]: baseDir,
+      })),
+    );
   }
 
   static async readToString(d: DataObject): Promise<DataObject> {
     const path = FS.getSrcFile(d, 'readToString');
     const content = await readFileAsync(path, 'utf8');
-    return d.set(FS.FileContent, content);
+    d[FS.FileContent] = content;
+    return d;
   }
 
   static writeToDirectory(dir: string): MapFn {
@@ -64,16 +70,17 @@ export default class FS {
       await mkdirp(nodePath.dirname(dest));
       await writeFileAsync(dest, content);
 
-      return d.set(FS.DestFile, dest);
+      d[FS.DestFile] = dest;
+      return d;
     };
   }
 
   static async printsRelativeFile(d: DataObject): Promise<void> {
-    log(d.get(FS.RelativeFile) as string);
+    log(d[FS.RelativeFile] as string);
   }
 
   static async printsDestFile(d: DataObject): Promise<void> {
-    log(d.get(FS.DestFile) as string);
+    log(d[FS.DestFile] as string);
   }
 
   static getSrcFile(map: DataObject, description: string): string {
@@ -84,26 +91,32 @@ export default class FS {
   }
 
   private static checkRelativeFile(d: DataObject, fn: string): string {
-    const path = d.get(FS.RelativeFile) as string|null;
+    const path = d[FS.RelativeFile] as string | null;
     if (!path) {
-      throw new Error(`${fn}: Relative path not found on data object "${inspect(d)}"`);
+      throw new Error(
+        `${fn}: Relative path not found on data object "${inspect(d)}"`,
+      );
     }
     return path;
   }
 
   private static checkSrcDir(d: DataObject, fn: string): string {
-    const path = d.get(FS.SrcDir) as string|null;
+    const path = d[FS.SrcDir] as string | null;
     if (!path) {
-      throw new Error(`${fn}: Src dir not found on data object "${inspect(d)}"`);
+      throw new Error(
+        `${fn}: Src dir not found on data object "${inspect(d)}"`,
+      );
     }
     return path;
   }
 
   private static checkFileContent(d: DataObject, fn: string): string {
-    const content = d.get(FS.FileContent) as string|null|undefined;
+    const content = d[FS.FileContent] as string | null | undefined;
     // Empty content is permitted, so here we only check undefined/null
     if (content === undefined || content === null) {
-      throw new Error(`${fn}: File content not found on data object "${inspect(d)}"`);
+      throw new Error(
+        `${fn}: File content not found on data object "${inspect(d)}"`,
+      );
     }
     return content;
   }

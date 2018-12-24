@@ -3,51 +3,8 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as colors from 'ansi-colors';
 import log from './log';
 
-export class DataObject {
-  static fromEntries(params: Array<[string, unknown]>): DataObject {
-    const map = new Map<string, unknown>();
-    if (params) {
-      for (const arr of params) {
-        if (!Array.isArray(arr)) {
-          throw new Error(`Argument not an array: ${arr}`);
-        }
-        if (arr.length !== 2) {
-          throw new Error(`Array length should always be 2: ${arr}`);
-        }
-        const [k, v] = arr;
-        map.set(k as string, v);
-      }
-    }
-    return new DataObject(map);
-  }
-
-  map: Map<string, unknown>;
-
-  constructor(map: Map<string, unknown>) {
-    this.map = map || new Map<string, unknown>();
-  }
-
-  get(key: string): unknown {
-    return this.map.get(key);
-  }
-
-  set(key: string, value: unknown): DataObject {
-    this.map.set(key, value);
-    return this;
-  }
-
-  copy(): DataObject {
-    return new DataObject(this.map);
-  }
-
-  toObject(): object {
-    // tslint:disable-next-line no-any
-    const obj: any = {};
-    for (const [key, value] of this.map) {
-      obj[key] = value;
-    }
-    return obj;
-  }
+export interface DataObject {
+  [key: string]: unknown;
 }
 
 export type MapFn = (obj: DataObject) => Promise<DataObject>;
@@ -62,9 +19,7 @@ export default class DataList {
     if (!values) {
       return new DataList();
     }
-    return new DataList(
-      values.map(value => DataObject.fromEntries([[key, value]])),
-    );
+    return new DataList(values.map(value => ({ [key]: value })));
   }
 
   list: DataObject[];
@@ -78,7 +33,7 @@ export default class DataList {
 
   values(key: string): unknown {
     throwIfFalsy(key, 'key');
-    return this.list.map(d => d.get(key));
+    return this.list.map(d => d[key]);
   }
 
   async map(description: string, fn: MapFn): Promise<DataList> {

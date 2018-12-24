@@ -117,8 +117,9 @@ test('writeToDirectory (change content)', async () => {
   const files = await mk.fs.src(FilesDir, '**/*.txt');
   await files.map('Read files', mk.fs.readToString);
   await files.map('Update files', async d => {
-    const content = d.get(mk.fs.FileContent) as string;
-    return d.set(mk.fs.FileContent, '*' + content);
+    const content = d[mk.fs.FileContent] as string;
+    d[mk.fs.FileContent] = '*' + content;
+    return d;
   });
   await files.map('Write files', mk.fs.writeToDirectory(dest));
   await testFileAsync(`${dest}/a.txt`, '*A\n');
@@ -131,9 +132,12 @@ test('writeToDirectory (null content)', async () => {
   const files = await mk.fs.src(FilesDir, 'empty.bin');
   await files.map('Read files', mk.fs.readToString);
   await files.map('Update files', async d => {
-    return d.set(mk.fs.FileContent, null);
+    d[mk.fs.FileContent] = null;
+    return d;
   });
-  await expect(files.map('Write files', mk.fs.writeToDirectory(dest))).rejects.toThrow('writeToDirectory: File content not found on data object');
+  await expect(
+    files.map('Write files', mk.fs.writeToDirectory(dest)),
+  ).rejects.toThrow('writeToDirectory: File content not found on data object');
 });
 
 test('writeToDirectory (empty file)', async () => {
