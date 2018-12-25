@@ -1,7 +1,8 @@
-import { filterAsync } from 'node-filter-async';
+import filterAsync from 'node-filter-async';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as colors from 'ansi-colors';
 import log from './log';
+import * as ProgressBar from 'progress';
 
 export interface DataObject {
   [key: string]: unknown;
@@ -28,7 +29,11 @@ export default class DataList {
 
   constructor(list?: DataObject[]) {
     this.list = list || [];
-    this.logRoutines('Creation');
+    this.logRoutines('Job started');
+  }
+
+  get count(): number {
+    return this.list.length;
   }
 
   values(key: string): unknown {
@@ -40,7 +45,7 @@ export default class DataList {
     throwIfFalsy(fn, 'fn');
     this.logRoutines(description);
 
-    const promises = this.list.map(fn);
+    const promises = this.progressive(this.list.map(fn));
     this.list = await Promise.all(promises);
     return this;
   }
@@ -57,7 +62,8 @@ export default class DataList {
     throwIfFalsy(fn, 'fn');
     this.logRoutines(description);
 
-    this.list = await filterAsync(this.list, fn);
+    const progBar = this.progressBar();
+    this.list = await filterAsync(this.list, fn, () => progBar.tick());
     return this;
   }
 
@@ -65,7 +71,7 @@ export default class DataList {
     throwIfFalsy(fn, 'fn');
     this.logRoutines(description);
 
-    const promises = this.list.map(fn);
+    const promises = this.progressive(this.list.map(fn));
     await Promise.all(promises);
   }
 
@@ -88,5 +94,24 @@ export default class DataList {
       log(colors.yellow(`  >> ${msg}`));
       this.prevLength = this.list.length;
     }
+  }
+
+  private progressBar(): ProgressBar {
+    return new ProgressBar('[:bar]', {
+      complete: '=',
+      incomplete: ' ',
+      width: process.stdout.columns ? process.stdout.columns - 2 : 20,
+      total: this.count,
+      clear: true,
+    });
+  }
+
+  private progressive<T>(promises: Array<Promise<T>>): Array<Promise<T>> {
+    const bar = this.progressBar();
+    return promises.map(async p => {
+      const result = await p;
+      bar.tick();
+      return result;
+    });
   }
 }

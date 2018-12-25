@@ -144,7 +144,7 @@ import * as nodepath from 'path';
 
 Sample output:
 ```
-🚙 Creation
+🚙 Job started
   LEN: 3
 🚙 Source files
 a.js
