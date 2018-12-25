@@ -30,6 +30,7 @@ export default class DataList {
   constructor(list?: DataObject[]) {
     this.list = list || [];
     this.logRoutines('Job started');
+    this.logLengthIfNeeded();
   }
 
   get count(): number {
@@ -47,6 +48,7 @@ export default class DataList {
 
     const promises = this.progressive(this.list.map(fn));
     this.list = await Promise.all(promises);
+    this.logLengthIfNeeded();
     return this;
   }
 
@@ -55,6 +57,7 @@ export default class DataList {
     this.logRoutines(description);
 
     this.list = await fn(this.list);
+    this.logLengthIfNeeded();
     return this;
   }
 
@@ -64,6 +67,7 @@ export default class DataList {
 
     const progBar = this.progressBar();
     this.list = await filterAsync(this.list, fn, () => progBar.tick());
+    this.logLengthIfNeeded();
     return this;
   }
 
@@ -78,7 +82,6 @@ export default class DataList {
   private logRoutines(description: string) {
     throwIfFalsy(description, 'description');
     this.logTitle(description);
-    this.logLengthIfNeeded();
   }
 
   private logTitle(title: string) {

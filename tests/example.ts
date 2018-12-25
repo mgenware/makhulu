@@ -23,7 +23,6 @@ function getRandomInt(min: number, max: number) {
   await dataList.filter('filter', async d => {
     const ms = getRandomInt(10, 3000);
     await mk.sleep(ms);
-    console.log('f ', d);
     return d.n !== 2;
   });
 })();
