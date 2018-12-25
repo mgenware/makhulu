@@ -42,33 +42,30 @@ export default class DataList {
     return this.list.map(d => d[key]);
   }
 
-  async map(description: string, fn: MapFn): Promise<DataList> {
+  async map(description: string, fn: MapFn): Promise<void> {
     throwIfFalsy(fn, 'fn');
     this.logRoutines(description);
 
     const promises = this.progressive(this.list.map(fn));
     this.list = await Promise.all(promises);
     this.logLengthIfNeeded();
-    return this;
   }
 
-  async reset(description: string, fn: ResetFn): Promise<DataList> {
+  async reset(description: string, fn: ResetFn): Promise<void> {
     throwIfFalsy(fn, 'fn');
     this.logRoutines(description);
 
     this.list = await fn(this.list);
     this.logLengthIfNeeded();
-    return this;
   }
 
-  async filter(description: string, fn: FilterFn): Promise<DataList> {
+  async filter(description: string, fn: FilterFn): Promise<void> {
     throwIfFalsy(fn, 'fn');
     this.logRoutines(description);
 
     const progBar = this.progressBar();
     this.list = await filterAsync(this.list, fn, () => progBar.tick());
     this.logLengthIfNeeded();
-    return this;
   }
 
   async forEach(description: string, fn: ForEachFn): Promise<void> {
