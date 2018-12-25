@@ -16,14 +16,16 @@ function getRandomInt(min: number, max: number) {
     return d;
   });
 
-  await dataList.map('Do nothing', async d => {
-    await mk.sleep(1000);
-    return d;
-  });
-
   await dataList.filter('Filter out even numbers', async d => {
     const ms = getRandomInt(10, 3000);
     await mk.sleep(ms);
     return (d.n as number) % 2 === 1;
+  });
+
+  await dataList.reset('Add more elements', async arr => {
+    await mk.sleep(1000);
+    arr.push({ n: -1 });
+    arr.push({ n: -10 });
+    return arr;
   });
 })();
