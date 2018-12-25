@@ -8,21 +8,22 @@ function getRandomInt(min: number, max: number) {
 }
 
 (async () => {
-  const dataList = new mk.DataList([1, 2, 3].map(i => ({ n: i })));
-  await dataList.map('1', async d => {
+  const dataList = new mk.DataList([1, 2, 3].map(i => ({ n: i })), true);
+  await dataList.map('Add random values', async d => {
     const ms = getRandomInt(10, 3000);
     await mk.sleep(ms);
+    (d.n as number) += ms;
     return d;
   });
 
-  await dataList.map('2', async d => {
+  await dataList.map('Do nothing', async d => {
     await mk.sleep(1000);
     return d;
   });
 
-  await dataList.filter('filter', async d => {
+  await dataList.filter('Filter out even numbers', async d => {
     const ms = getRandomInt(10, 3000);
     await mk.sleep(ms);
-    return d.n !== 2;
+    return (d.n as number) % 2 === 1;
   });
 })();

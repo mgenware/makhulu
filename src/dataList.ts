@@ -26,11 +26,14 @@ export default class DataList {
   list: DataObject[];
   // defaults to -1 (not set)
   prevLength = -1;
+  autoLog = false;
 
-  constructor(list?: DataObject[]) {
+  constructor(list?: DataObject[], autoLog = false) {
+    this.autoLog = autoLog;
     this.list = list || [];
     this.logRoutines('Job started');
     this.logLengthIfNeeded();
+    this.logIfNeeded();
   }
 
   get count(): number {
@@ -49,6 +52,7 @@ export default class DataList {
     const promises = this.progressive(this.list.map(fn));
     this.list = await Promise.all(promises);
     this.logLengthIfNeeded();
+    this.logIfNeeded();
   }
 
   async reset(description: string, fn: ResetFn): Promise<void> {
@@ -57,6 +61,7 @@ export default class DataList {
 
     this.list = await fn(this.list);
     this.logLengthIfNeeded();
+    this.logIfNeeded();
   }
 
   async filter(description: string, fn: FilterFn): Promise<void> {
@@ -66,6 +71,7 @@ export default class DataList {
     const progBar = this.progressBar();
     this.list = await filterAsync(this.list, fn, () => progBar.tick());
     this.logLengthIfNeeded();
+    this.logIfNeeded();
   }
 
   async forEach(description: string, fn: ForEachFn): Promise<void> {
@@ -74,6 +80,26 @@ export default class DataList {
 
     const promises = this.progressive(this.list.map(fn));
     await Promise.all(promises);
+    this.logIfNeeded();
+  }
+
+  log() {
+    // tslint:disable-next-line no-console
+    console.log(this.list);
+  }
+
+  startLogging() {
+    this.autoLog = true;
+  }
+
+  stopLogging() {
+    this.autoLog = false;
+  }
+
+  private logIfNeeded() {
+    if (this.autoLog) {
+      this.log();
+    }
   }
 
   private logRoutines(description: string) {
