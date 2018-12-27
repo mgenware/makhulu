@@ -36,6 +36,7 @@
     "@types/jest": "^23.3.10",
     "@types/make-dir": "^1.0.3",
     "@types/node": "^10.12.12",
+    "@types/pretty-ms": "^4.0.0",
     "@types/progress": "^2.0.3",
     "jest": "^23.6.0",
     "rimraf": "^2.6.2",
@@ -47,6 +48,7 @@
     "fast-glob": "^2.2.4",
     "make-dir": "^1.3.0",
     "node-filter-async": "^1.1.1",
+    "pretty-ms": "^4.0.0",
     "progress": "^2.0.3",
     "throw-if-arg-empty": "^1.0.1"
   }

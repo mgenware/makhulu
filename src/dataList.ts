@@ -3,6 +3,8 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as colors from 'ansi-colors';
 import log from './log';
 import * as ProgressBar from 'progress';
+import { performance } from 'perf_hooks';
+import * as prettyMS from 'pretty-ms';
 
 export interface DataObject {
   [key: string]: unknown;
@@ -25,14 +27,16 @@ export default class DataList {
 
   list: DataObject[];
   // defaults to -1 (not set)
-  prevLength = -1;
-  autoLog = false;
+  private prevLength = -1;
+  private autoLog = false;
+  private startTime = 0;
 
   constructor(list?: DataObject[], autoLog = false) {
     this.autoLog = autoLog;
     this.list = list || [];
-    this.onActionStarted('Job started');
-    this.onActionEnded();
+    const name = 'Job started';
+    this.onActionStarted(name);
+    this.onActionEnded(name);
   }
 
   get count(): number {
@@ -51,7 +55,7 @@ export default class DataList {
     const promises = this.progressive(this.list.map(fn));
     this.list = await Promise.all(promises);
 
-    this.onActionEnded();
+    this.onActionEnded(name);
   }
 
   async reset(name: string, fn: ResetFn): Promise<void> {
@@ -60,7 +64,7 @@ export default class DataList {
 
     this.list = await fn(this.list);
 
-    this.onActionEnded();
+    this.onActionEnded(name);
   }
 
   async filter(name: string, fn: FilterFn): Promise<void> {
@@ -70,7 +74,7 @@ export default class DataList {
     const progBar = this.progressBar();
     this.list = await filterAsync(this.list, fn, () => progBar.tick());
 
-    this.onActionEnded();
+    this.onActionEnded(name);
   }
 
   async forEach(name: string, fn: ForEachFn): Promise<void> {
@@ -80,7 +84,7 @@ export default class DataList {
     const promises = this.progressive(this.list.map(fn));
     await Promise.all(promises);
 
-    this.onActionEnded();
+    this.onActionEnded(name);
   }
 
   logList() {
@@ -98,11 +102,14 @@ export default class DataList {
 
   private onActionStarted(name: string) {
     this.logName(name);
+    this.startTime = performance.now();
   }
 
-  private onActionEnded() {
+  private onActionEnded(_: string) {
     this.logLengthIfNeeded();
     this.logIfListNeeded();
+    const duration = performance.now() - this.startTime;
+    this.logTime(prettyMS(duration));
   }
 
   private logIfListNeeded() {
@@ -113,11 +120,11 @@ export default class DataList {
 
   private logName(name: string) {
     throwIfFalsy(name, 'name');
-    this.logTitle(name);
+    log(colors.cyan(`🦁 ${name}`));
   }
 
-  private logTitle(title: string) {
-    log(colors.cyan(`🚙 ${title}`));
+  private logTime(s: string) {
+    log(colors.gray(`> Done in ${s}`));
   }
 
   private logLengthIfNeeded() {
