@@ -12,10 +12,12 @@
 * Simple, no need to write plugins/wrappers, do everything in plain TypeScript
 * Strongly typed, supports TypeScript out of the box
 
+## Installation
+```sh
+yarn add makhulu
+```
+
 ## Getting started
-* Install makhulu `yarn add makhulu`
-* Create a new TypeScript file
-* Import makhulu and start coding
 
 ## Examples
 > More examples at https://github.com/mgenware/makhulu-examples

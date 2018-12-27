@@ -31,9 +31,8 @@ export default class DataList {
   constructor(list?: DataObject[], autoLog = false) {
     this.autoLog = autoLog;
     this.list = list || [];
-    this.logRoutines('Job started');
-    this.logLengthIfNeeded();
-    this.logIfNeeded();
+    this.onActionStarted('Job started');
+    this.onActionEnded();
   }
 
   get count(): number {
@@ -45,45 +44,46 @@ export default class DataList {
     return this.list.map(d => d[key]);
   }
 
-  async map(description: string, fn: MapFn): Promise<void> {
+  async map(name: string, fn: MapFn): Promise<void> {
     throwIfFalsy(fn, 'fn');
-    this.logRoutines(description);
+    this.onActionStarted(name);
 
     const promises = this.progressive(this.list.map(fn));
     this.list = await Promise.all(promises);
-    this.logLengthIfNeeded();
-    this.logIfNeeded();
+
+    this.onActionEnded();
   }
 
-  async reset(description: string, fn: ResetFn): Promise<void> {
+  async reset(name: string, fn: ResetFn): Promise<void> {
     throwIfFalsy(fn, 'fn');
-    this.logRoutines(description);
+    this.onActionStarted(name);
 
     this.list = await fn(this.list);
-    this.logLengthIfNeeded();
-    this.logIfNeeded();
+
+    this.onActionEnded();
   }
 
-  async filter(description: string, fn: FilterFn): Promise<void> {
+  async filter(name: string, fn: FilterFn): Promise<void> {
     throwIfFalsy(fn, 'fn');
-    this.logRoutines(description);
+    this.onActionStarted(name);
 
     const progBar = this.progressBar();
     this.list = await filterAsync(this.list, fn, () => progBar.tick());
-    this.logLengthIfNeeded();
-    this.logIfNeeded();
+
+    this.onActionEnded();
   }
 
-  async forEach(description: string, fn: ForEachFn): Promise<void> {
+  async forEach(name: string, fn: ForEachFn): Promise<void> {
     throwIfFalsy(fn, 'fn');
-    this.logRoutines(description);
+    this.onActionStarted(name);
 
     const promises = this.progressive(this.list.map(fn));
     await Promise.all(promises);
-    this.logIfNeeded();
+
+    this.onActionEnded();
   }
 
-  log() {
+  logList() {
     // tslint:disable-next-line no-console
     console.log(this.list);
   }
@@ -96,15 +96,24 @@ export default class DataList {
     this.autoLog = false;
   }
 
-  private logIfNeeded() {
+  private onActionStarted(name: string) {
+    this.logName(name);
+  }
+
+  private onActionEnded() {
+    this.logLengthIfNeeded();
+    this.logIfListNeeded();
+  }
+
+  private logIfListNeeded() {
     if (this.autoLog) {
-      this.log();
+      this.logList();
     }
   }
 
-  private logRoutines(description: string) {
-    throwIfFalsy(description, 'description');
-    this.logTitle(description);
+  private logName(name: string) {
+    throwIfFalsy(name, 'name');
+    this.logTitle(name);
   }
 
   private logTitle(title: string) {
