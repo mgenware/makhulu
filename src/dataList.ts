@@ -131,9 +131,9 @@ export default class DataList {
     if (this.prevLength !== this.list.length) {
       const msg =
         this.prevLength >= 0
-          ? `${this.prevLength} -> ${this.list.length}`
+          ? `${this.prevLength} >> ${this.list.length}`
           : `${this.list.length}`;
-      log(colors.yellow(`  >> ${msg}`));
+      log(colors.yellow(`> ${msg}`));
       this.prevLength = this.list.length;
     }
   }
