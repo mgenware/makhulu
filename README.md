@@ -12,10 +12,12 @@
 * Simple, no need to write plugins/wrappers, do everything in plain TypeScript
 * Strongly typed, supports TypeScript out of the box
 
+## Installation
+```sh
+yarn add makhulu
+```
+
 ## Getting started
-* Install makhulu `yarn add makhulu`
-* Create a new TypeScript file
-* Import makhulu and start coding
 
 ## Examples
 > More examples at https://github.com/mgenware/makhulu-examples
@@ -148,19 +150,26 @@ import * as nodepath from 'path';
 
 Sample output:
 ```
-🚙 Job started
-  >> 3
-🚙 Source files
+🦁 Job started
+> 3
+> Done in 1ms
+🦁 Source files
 a.js
 b.js
 subdir/c.js
-🚙 Read files
-🚙 Uglify
-🚙 Merge into one file
-  >> 3 -> 1
-🚙 Write files
-🚙 Dest files
+> Done in 3ms
+🦁 Read files
+> Done in 51ms
+🦁 Uglify
+> Done in 19ms
+🦁 Merge into one file
+> 3 >> 1
+> Done in 1ms
+🦁 Write files
+> Done in 4ms
+🦁 Dest files
 dist_files/uglifyjs-and-merge/bundle.js
+> Done in 1ms
 ```
 
 ## Common Errors

@@ -3,6 +3,8 @@ import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as colors from 'ansi-colors';
 import log from './log';
 import * as ProgressBar from 'progress';
+import { performance } from 'perf_hooks';
+import * as prettyMS from 'pretty-ms';
 
 export interface DataObject {
   [key: string]: unknown;
@@ -25,15 +27,16 @@ export default class DataList {
 
   list: DataObject[];
   // defaults to -1 (not set)
-  prevLength = -1;
-  autoLog = false;
+  private prevLength = -1;
+  private autoLog = false;
+  private startTime = 0;
 
   constructor(list?: DataObject[], autoLog = false) {
     this.autoLog = autoLog;
     this.list = list || [];
-    this.logRoutines('Job started');
-    this.logLengthIfNeeded();
-    this.logIfNeeded();
+    const name = 'Job started';
+    this.onActionStarted(name);
+    this.onActionEnded(name);
   }
 
   get count(): number {
@@ -45,45 +48,46 @@ export default class DataList {
     return this.list.map(d => d[key]);
   }
 
-  async map(description: string, fn: MapFn): Promise<void> {
+  async map(name: string, fn: MapFn): Promise<void> {
     throwIfFalsy(fn, 'fn');
-    this.logRoutines(description);
+    this.onActionStarted(name);
 
     const promises = this.progressive(this.list.map(fn));
     this.list = await Promise.all(promises);
-    this.logLengthIfNeeded();
-    this.logIfNeeded();
+
+    this.onActionEnded(name);
   }
 
-  async reset(description: string, fn: ResetFn): Promise<void> {
+  async reset(name: string, fn: ResetFn): Promise<void> {
     throwIfFalsy(fn, 'fn');
-    this.logRoutines(description);
+    this.onActionStarted(name);
 
     this.list = await fn(this.list);
-    this.logLengthIfNeeded();
-    this.logIfNeeded();
+
+    this.onActionEnded(name);
   }
 
-  async filter(description: string, fn: FilterFn): Promise<void> {
+  async filter(name: string, fn: FilterFn): Promise<void> {
     throwIfFalsy(fn, 'fn');
-    this.logRoutines(description);
+    this.onActionStarted(name);
 
     const progBar = this.progressBar();
     this.list = await filterAsync(this.list, fn, () => progBar.tick());
-    this.logLengthIfNeeded();
-    this.logIfNeeded();
+
+    this.onActionEnded(name);
   }
 
-  async forEach(description: string, fn: ForEachFn): Promise<void> {
+  async forEach(name: string, fn: ForEachFn): Promise<void> {
     throwIfFalsy(fn, 'fn');
-    this.logRoutines(description);
+    this.onActionStarted(name);
 
     const promises = this.progressive(this.list.map(fn));
     await Promise.all(promises);
-    this.logIfNeeded();
+
+    this.onActionEnded(name);
   }
 
-  log() {
+  logList() {
     // tslint:disable-next-line no-console
     console.log(this.list);
   }
@@ -96,28 +100,40 @@ export default class DataList {
     this.autoLog = false;
   }
 
-  private logIfNeeded() {
+  private onActionStarted(name: string) {
+    this.logName(name);
+    this.startTime = performance.now();
+  }
+
+  private onActionEnded(_: string) {
+    this.logLengthIfNeeded();
+    this.logIfListNeeded();
+    const duration = performance.now() - this.startTime;
+    this.logTime(prettyMS(duration));
+  }
+
+  private logIfListNeeded() {
     if (this.autoLog) {
-      this.log();
+      this.logList();
     }
   }
 
-  private logRoutines(description: string) {
-    throwIfFalsy(description, 'description');
-    this.logTitle(description);
+  private logName(name: string) {
+    throwIfFalsy(name, 'name');
+    log(colors.cyan(`🦁 ${name}`));
   }
 
-  private logTitle(title: string) {
-    log(colors.cyan(`🚙 ${title}`));
+  private logTime(s: string) {
+    log(colors.gray(`> Done in ${s}`));
   }
 
   private logLengthIfNeeded() {
     if (this.prevLength !== this.list.length) {
       const msg =
         this.prevLength >= 0
-          ? `${this.prevLength} -> ${this.list.length}`
+          ? `${this.prevLength} >> ${this.list.length}`
           : `${this.list.length}`;
-      log(colors.yellow(`  >> ${msg}`));
+      log(colors.yellow(`> ${msg}`));
       this.prevLength = this.list.length;
     }
   }
