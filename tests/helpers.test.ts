@@ -1,10 +1,20 @@
 import * as mk from '../';
 
+mk.setLoggingEnabled(false);
+
 test('sleep', async () => {
   expect(typeof mk.sleep).toBe('function');
 });
 
 test('count', async () => {
-  expect(await mk.count(4)).toEqual([0, 1, 2, 3]);
-  expect(await mk.count(4, -3)).toEqual([-3, -2, -1, 0]);
+  expect(await mk.count(3).list).toEqual([
+    { index: 0 },
+    { index: 1 },
+    { index: 2 },
+  ]);
+  expect(await mk.count(3, -3).list).toEqual([
+    { index: -3 },
+    { index: -2 },
+    { index: -1 },
+  ]);
 });

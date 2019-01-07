@@ -1,8 +1,10 @@
+import { DataList } from './main';
+
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function count(length: number, start = 0): number[] {
+export function count(length: number, start = 0): DataList {
   if (length < 0) {
     throw new Error('The "length" argument cannot be negative');
   }
@@ -10,5 +12,5 @@ export function count(length: number, start = 0): number[] {
   for (let i = 0; i < length; i++) {
     arr[i] = start + i;
   }
-  return arr;
+  return DataList.all(arr, 'index');
 }
