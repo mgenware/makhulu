@@ -18,7 +18,7 @@ export type ResetFn = (objs: DataObject[]) => Promise<DataObject[]>;
 export default class DataList {
   static logging = true;
 
-  static all(values: Array<unknown>, key: string): DataList {
+  static all(values: unknown[], key: string): DataList {
     if (!values) {
       return new DataList();
     }
