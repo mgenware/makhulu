@@ -28,10 +28,6 @@
   "engines": {
     "node": ">=8.5.0"
   },
-  "prettier": {
-    "singleQuote": true,
-    "trailingComma": "all"
-  },
   "jest": {
     "testRegex": "/dist_tests/.*(\\.|/)(test|spec)\\.jsx?$"
   },
