@@ -1,5 +1,5 @@
 export { default as DataList, DataObject } from './dataList';
-export { default as fs } from './fs';
+export { default as fs, FSSrcOptions } from './fs';
 export { setLoggingEnabled } from './log';
 export * from './helpers';
 

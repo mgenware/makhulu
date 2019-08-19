@@ -9,6 +9,8 @@ import * as fs from 'fs';
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
 
+export type FSSrcOptions = fastGlob.Options;
+
 export default class FS {
   static get RelativeFile(): string {
     return 'file.relative_file';
@@ -29,7 +31,7 @@ export default class FS {
   static async src(
     baseDir: string,
     patterns?: string | string[],
-    options?: object,
+    options?: FSSrcOptions,
   ): Promise<DataList> {
     throwIfFalsy(baseDir, 'baseDir');
     if (baseDir.includes('*') || baseDir.includes('?')) {
