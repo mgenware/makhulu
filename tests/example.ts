@@ -1,5 +1,7 @@
 import * as mk from '../';
 
+mk.setLoggingEnabled(false);
+
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 function getRandomInt(min: number, max: number) {
   min = Math.ceil(min);
@@ -8,7 +10,7 @@ function getRandomInt(min: number, max: number) {
 }
 
 (async () => {
-  const dataList = new mk.DataList([1, 2, 3].map(i => ({ n: i })), true);
+  const dataList = new mk.DataList([1, 2, 3].map(i => ({ n: i })));
   await dataList.map('Add random values', async d => {
     const ms = getRandomInt(10, 3000);
     await mk.sleep(ms);

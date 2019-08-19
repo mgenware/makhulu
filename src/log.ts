@@ -4,10 +4,11 @@ export function setLoggingEnabled(value: boolean) {
   logging = value;
 }
 
-export default function log(msg: string) {
+// tslint:disable-next-line no-any
+export default function log(arg: any) {
   if (!logging) {
     return;
   }
   // tslint:disable-next-line no-console
-  console.log(msg);
+  console.log(arg);
 }

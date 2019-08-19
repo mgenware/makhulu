@@ -30,7 +30,6 @@ export default class FS {
     baseDir: string,
     patterns?: string | string[],
     options?: object,
-    autoLog = false,
   ): Promise<DataList> {
     throwIfFalsy(baseDir, 'baseDir');
     if (baseDir.includes('*') || baseDir.includes('?')) {
@@ -51,16 +50,7 @@ export default class FS {
         [FS.RelativeFile]: p,
         [FS.SrcDir]: baseDir,
       })),
-      autoLog,
     );
-  }
-
-  static async srcWithLogging(
-    baseDir: string,
-    patterns?: string | string[],
-    options?: object,
-  ): Promise<DataList> {
-    return FS.src(baseDir, patterns, options, true);
   }
 
   static async readToString(d: DataObject): Promise<DataObject> {

@@ -28,11 +28,9 @@ export default class DataList {
   list: DataObject[];
   // defaults to -1 (not set)
   private prevLength = -1;
-  private autoLog = false;
   private startTime = 0;
 
-  constructor(list?: DataObject[], autoLog = false) {
-    this.autoLog = autoLog;
+  constructor(list?: DataObject[]) {
     this.list = list || [];
     const name = 'Job started';
     this.onActionStarted(name);
@@ -88,16 +86,7 @@ export default class DataList {
   }
 
   logList() {
-    // tslint:disable-next-line no-console
-    console.log(this.list);
-  }
-
-  startLogging() {
-    this.autoLog = true;
-  }
-
-  stopLogging() {
-    this.autoLog = false;
+    log(this.list);
   }
 
   private onActionStarted(name: string) {
@@ -106,16 +95,10 @@ export default class DataList {
   }
 
   private onActionEnded(_: string) {
-    this.logLengthIfNeeded();
-    this.logIfListNeeded();
+    this.logLength();
+    this.logList();
     const duration = performance.now() - this.startTime;
     this.logTime(prettyMS(duration));
-  }
-
-  private logIfListNeeded() {
-    if (this.autoLog) {
-      this.logList();
-    }
   }
 
   private logName(name: string) {
@@ -127,7 +110,7 @@ export default class DataList {
     log(colors.gray(`> Done in ${s}`));
   }
 
-  private logLengthIfNeeded() {
+  private logLength() {
     if (this.prevLength !== this.list.length) {
       const msg =
         this.prevLength >= 0
