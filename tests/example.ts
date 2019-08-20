@@ -1,7 +1,5 @@
 import * as mk from '../';
 
-mk.setLoggingEnabled(false);
-
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 function getRandomInt(min: number, max: number) {
   min = Math.ceil(min);
