@@ -1,18 +1,19 @@
 import * as mk from '../';
+import * as assert from 'assert';
 
 mk.setLoggingEnabled(false);
 
-test('sleep', async () => {
-  expect(typeof mk.sleep).toBe('function');
+it('sleep', async () => {
+  assert.equal(typeof mk.sleep, 'function');
 });
 
-test('count', async () => {
-  expect(await mk.count(3).list).toEqual([
+it('count', async () => {
+  assert.deepEqual(await mk.count(3).list, [
     { index: 0 },
     { index: 1 },
     { index: 2 },
   ]);
-  expect(await mk.count(3, -3).list).toEqual([
+  assert.deepEqual(await mk.count(3, -3).list, [
     { index: -3 },
     { index: -2 },
     { index: -1 },

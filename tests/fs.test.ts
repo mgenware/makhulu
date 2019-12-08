@@ -1,10 +1,12 @@
 import * as mk from '../';
 import { testFileData, testFileAsync } from './common';
+import { itRejects } from 'it-throws';
+
 const FilesDir = './tests/glob-files';
 
 mk.setLoggingEnabled(false);
 
-test('src - ** - direct children', async () => {
+it('src - ** - direct children', async () => {
   const files = await mk.fs.src(FilesDir, '*.txt');
   testFileData(files, [
     {
@@ -18,7 +20,7 @@ test('src - ** - direct children', async () => {
   ]);
 });
 
-test('src - ** - all children', async () => {
+it('src - ** - all children', async () => {
   const files = await mk.fs.src(FilesDir, '**/*.txt');
   testFileData(files, [
     {
@@ -36,7 +38,7 @@ test('src - ** - all children', async () => {
   ]);
 });
 
-test('src - no glob', async () => {
+it('src - no glob', async () => {
   const files = await mk.fs.src(FilesDir);
   testFileData(files, [
     {
@@ -62,7 +64,7 @@ test('src - no glob', async () => {
   ]);
 });
 
-test('src - multiple patterns', async () => {
+it('src - multiple patterns', async () => {
   const files = await mk.fs.src(FilesDir, ['**/*', '!*.json', '!empty.bin']);
   testFileData(files, [
     {
@@ -80,7 +82,7 @@ test('src - multiple patterns', async () => {
   ]);
 });
 
-test('readToString', async () => {
+it('readToString', async () => {
   const files = await mk.fs.src(FilesDir, '**/*.txt');
   await files.map('Read files', mk.fs.readToString);
   testFileData(files, [
@@ -102,7 +104,7 @@ test('readToString', async () => {
   ]);
 });
 
-test('writeToDirectory', async () => {
+it('writeToDirectory', async () => {
   const dest = './dist_tests/files/copy';
   const files = await mk.fs.src(FilesDir, '**/*.txt');
   await files.map('Read files', mk.fs.readToString);
@@ -112,7 +114,7 @@ test('writeToDirectory', async () => {
   await testFileAsync(`${dest}/sub/d.txt`, 'D\n');
 });
 
-test('writeToDirectory (change content)', async () => {
+it('writeToDirectory (change content)', async () => {
   const dest = './dist_tests/files/mod';
   const files = await mk.fs.src(FilesDir, '**/*.txt');
   await files.map('Read files', mk.fs.readToString);
@@ -127,7 +129,7 @@ test('writeToDirectory (change content)', async () => {
   await testFileAsync(`${dest}/sub/d.txt`, '*D\n');
 });
 
-test('writeToDirectory (null content)', async () => {
+it('writeToDirectory (null content)', async () => {
   const dest = './dist_tests/files/_';
   const files = await mk.fs.src(FilesDir, 'empty.bin');
   await files.map('Read files', mk.fs.readToString);
@@ -135,12 +137,13 @@ test('writeToDirectory (null content)', async () => {
     d[mk.fs.FileContent] = null;
     return d;
   });
-  await expect(
+  await itRejects(
     files.map('Write files', mk.fs.writeToDirectory(dest)),
-  ).rejects.toThrow('writeToDirectory: File content not found on data object');
+    /writeToDirectory: File content not found on data object/,
+  );
 });
 
-test('writeToDirectory (empty file)', async () => {
+it('writeToDirectory (empty file)', async () => {
   const dest = './dist_tests/files/empty_file';
   const files = await mk.fs.src(FilesDir, 'empty.bin');
   await files.map('Read files', mk.fs.readToString);

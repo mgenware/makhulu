@@ -1,5 +1,7 @@
 import { DataList, setLoggingEnabled } from '../';
 import { testDataList } from './common';
+import * as assert from 'assert';
+import { itRejects } from 'it-throws';
 
 setLoggingEnabled(false);
 
@@ -11,22 +13,22 @@ function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-test('ctor', () => {
+it('ctor', () => {
   const t = task();
   testDataList(t, [{ num: 1 }, { num: 2 }]);
 });
 
-test('all', () => {
+it('all', () => {
   const t = DataList.all([1, 2], 'haha');
   testDataList(t, [{ haha: 1 }, { haha: 2 }]);
 });
 
-test('values', () => {
+it('values', () => {
   const t = task();
-  expect(t.values('num')).toEqual([1, 2]);
+  assert.deepEqual(t.values('num'), [1, 2]);
 });
 
-test('map', async () => {
+it('map', async () => {
   const t = task();
   await t.map('t', async d => {
     if ((d.num as number) % 2 === 0) {
@@ -36,23 +38,24 @@ test('map', async () => {
     d.changed = true;
     return d;
   });
-  testDataList(t, [{ num: 2, changed: true }, { num: 3, changed: true }]);
+  testDataList(t, [
+    { num: 2, changed: true },
+    { num: 3, changed: true },
+  ]);
 });
 
-test('map with error', async () => {
+it('map with error', async () => {
   const t = task();
-  try {
-    await t.map('t', async () => {
+  await itRejects(
+    t.map('t', async () => {
       await sleep(300);
       throw new Error('Fake');
-    });
-    fail('Should catch an error');
-  } catch (ex) {
-    expect(ex.message).toBe('Fake');
-  }
+    }),
+    'Fake',
+  );
 });
 
-test('filter', async () => {
+it('filter', async () => {
   const t = task();
   await t.filter('t', async d => {
     if ((d.num as number) % 2 === 0) {
@@ -63,7 +66,7 @@ test('filter', async () => {
   testDataList(t, [{ num: 2 }]);
 });
 
-test('reset', async () => {
+it('reset', async () => {
   const t = task();
   const prevEntries = t.list;
   await sleep(300);
@@ -73,5 +76,5 @@ test('reset', async () => {
     return copied;
   });
   prevEntries.reverse();
-  expect(t.list).toEqual(prevEntries);
+  assert.deepEqual(t.list, prevEntries);
 });

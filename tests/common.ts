@@ -1,15 +1,16 @@
 import * as mk from '../';
 import { promisify } from 'util';
 import * as fs from 'fs';
+import * as assert from 'assert';
 const readFileAsync = promisify(fs.readFile);
 
 export function testDataList(src: mk.DataList, arr: object[]) {
-  expect(src.list).toEqual(arr);
+  assert.deepEqual(src.list, arr);
 }
 
 export async function testFileAsync(path: string, content: string) {
   const res = await readFileAsync(path, 'utf8');
-  expect(res).toBe(content);
+  assert.equal(res, content);
 }
 
 // tslint:disable-next-line no-any
@@ -23,5 +24,5 @@ export function testFileData(a: mk.DataList, b: object[]) {
   const src = a.list;
   src.sort(compareFileData);
   b.sort(compareFileData);
-  expect(src).toEqual(b);
+  assert.deepEqual(src, b);
 }
