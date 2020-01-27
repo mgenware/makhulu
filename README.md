@@ -1,18 +1,20 @@
 # makhulu
 
+[![Build Status](https://github.com/mgenware/makhulu/workflows/Build/badge.svg)](https://github.com/mgenware/makhulu/actions)
 [![MEAN Module](https://img.shields.io/badge/MEAN%20Module-TypeScript-blue.svg?style=flat-square)](https://github.com/mgenware/MEAN-Module)
-[![Build Status](https://img.shields.io/travis/mgenware/makhulu.svg?style=flat-square&label=Build+Status)](https://travis-ci.org/mgenware/makhulu)
 [![npm version](https://img.shields.io/npm/v/makhulu.svg?style=flat-square)](https://npmjs.com/package/makhulu)
 [![Node.js Version](http://img.shields.io/node/v/makhulu.svg?style=flat-square)](https://nodejs.org/en/)
 
 <img width="150" height="192" src="makhulu.jpg" alt="ky">
 
 🦁 Simple and parallel Node.js task runner
-* Parallel, all functions are written in async
-* Simple, no need to write plugins/wrappers, do everything in plain TypeScript
-* Strongly typed, supports TypeScript out of the box
+
+- Parallel, all functions are written in async
+- Simple, no need to write plugins/wrappers, do everything in plain TypeScript
+- Strongly typed, supports TypeScript out of the box
 
 ## Installation
+
 ```sh
 yarn add makhulu
 ```
@@ -20,9 +22,11 @@ yarn add makhulu
 ## Getting started
 
 ## Examples
+
 > More examples at https://github.com/mgenware/makhulu-examples
 
 Use the latest uglifyjs to uglify all JS files in `./test_files/`, then merge the results into one single file `merge.js` and save it to `./dist_files`:
+
 ```ts
 /**
  * Assuming you have installed the following packages:
@@ -149,6 +153,7 @@ import * as nodepath from 'path';
 ```
 
 Sample output:
+
 ```
 🦁 Job started
 > 3
@@ -175,9 +180,12 @@ dist_files/uglifyjs-and-merge/bundle.js
 ## Common Errors
 
 ### File content not found on data object
+
 This happens when you call `writeToDirectory` and `DataObject.get(FS.FileContent)` returns `null` or `undefined`, possible reasons:
-* You forgot to call `readToString`, or called `readToString` without the `await` keyword before a call to `writeToDirectory`.
-* You accidentally set this value to `null` or `undefined`, if you want to write to an empty file, set it to an empty string (`''`), or if you want to remove this file, use `DataList.filter` or `DataList.reset` instead.
+
+- You forgot to call `readToString`, or called `readToString` without the `await` keyword before a call to `writeToDirectory`.
+- You accidentally set this value to `null` or `undefined`, if you want to write to an empty file, set it to an empty string (`''`), or if you want to remove this file, use `DataList.filter` or `DataList.reset` instead.
 
 ### Relative path not found on data object
+
 `writeToDirectory` cannot locate the source path of a file, you forgot to call `fs.src` before `writeToDirectory`?
