@@ -4,11 +4,11 @@ export function setLoggingEnabled(value: boolean) {
   logging = value;
 }
 
-// tslint:disable-next-line no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function log(arg: any) {
   if (!logging) {
     return;
   }
-  // tslint:disable-next-line no-console
+  // eslint-disable-next-line no-console
   console.log(arg);
 }

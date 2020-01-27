@@ -13,11 +13,11 @@ export async function testFileAsync(path: string, content: string) {
   assert.equal(res, content);
 }
 
-// tslint:disable-next-line no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function compareFileData(a: any, b: any): number {
-  return (a[mk.fs.RelativeFile] as string).localeCompare(b[
-    mk.fs.RelativeFile
-  ] as string);
+  return (a[mk.fs.RelativeFile] as string).localeCompare(
+    b[mk.fs.RelativeFile] as string,
+  );
 }
 
 export function testFileData(a: mk.DataList, b: object[]) {
