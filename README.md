@@ -5,12 +5,12 @@
 [![npm version](https://img.shields.io/npm/v/makhulu.svg?style=flat-square)](https://npmjs.com/package/makhulu)
 [![Node.js Version](http://img.shields.io/node/v/makhulu.svg?style=flat-square)](https://nodejs.org/en/)
 
-<img width="150" height="192" src="makhulu.jpg" alt="ky">
+<img width="150" height="192" src="makhulu.jpg" alt="makhulu">
 
 🦁 Simple and parallel Node.js task runner
 
-- Parallel, all functions are written in async
-- Simple, no need to write plugins/wrappers, do everything in plain TypeScript
+- Parallel, all functions are async
+- Simple, no need to write plugins/wrappers, do everything in plain TypeScript / JavaScript
 - Strongly typed, supports TypeScript out of the box
 
 ## Installation
@@ -19,57 +19,55 @@
 yarn add makhulu
 ```
 
-## Getting started
-
-## Examples
+## A step-by-step example with comments
 
 > More examples at https://github.com/mgenware/makhulu-examples
 
-Use the latest uglifyjs to uglify all JS files in `./test_files/`, then merge the results into one single file `merge.js` and save it to `./dist_files`:
+Use terserjs to uglify all .js files in `files` folder, and merge the results into one file and write it to `dist/bundle.js`:
 
 ```ts
 /**
- * Assuming you have installed the following packages:
- * makhulu, uglify-js, @types/uglify-js
+ * Prerequisites:
+ * Please install the required packages first:
+ * `yarn add makhulu terser`
  */
 import * as mk from 'makhulu';
-import { minify } from 'uglify-js';
-import * as nodepath from 'path';
+import { minify } from 'terser';
 
 (async () => {
-  const srcDir = './test_files/';
-  // Select all js files as the initial data list
+  // Select all .js files as initial data list.
+  const srcDir = './files/';
   const files = await mk.fs.src(srcDir, '**/*.js');
   /**
-   * Now the data list is like:
+   * Now the data list is something like:
    * [
    *   {
-   *      SrcDir: './test_files/',
+   *      SrcDir: './files/',
    *      FilePath: 'a.js',
    *    },
    *    {
-   *      SrcDir: './test_files/',
+   *      SrcDir: './files/',
    *      FilePath: 'sub/b/js',
    *    },
    *    ...
    * ]
    */
 
-  // Prints src file paths using printsRelativeFile
+  // Print out data list file paths using `printsRelativeFile`.
   await files.forEach('Source files', mk.fs.printsRelativeFile);
 
-  // Read file paths to string contents, now data list contains file content data
+  // Read file contents, now each data entry contains file contents.
   await files.map('Read files', mk.fs.readToString);
   /**
-   * Now the data list is like (note that this only adds attributes to the target data map, all previous attributes are preserved):
+   * Now the data list is like (note that "Read file" only adds attributes to the data list, all previous attributes are preserved):
    * [
    *   {
-   *      SrcDir: './test_files/',
+   *      SrcDir: './files/',
    *      FilePath: 'a.js',
    *      Content: 'blabla',
    *    },
    *    {
-   *      SrcDir: './test_files/',
+   *      SrcDir: './files/',
    *      FilePath: 'sub/b/js',
    *      Content: 'blabla',
    *    },
@@ -77,13 +75,10 @@ import * as nodepath from 'path';
    * ]
    */
 
-  // You can modify the content to whatever you want, e.g. uglify the content
-  await files.map('Uglify', async data => {
+  // You can change the content to whatever you want, e.g. uglify the content.
+  await files.map('Uglify', async (data) => {
     const content = data[mk.fs.FileContent] as string;
-    const uglifyRes = minify(content);
-    if (uglifyRes.error) {
-      throw uglifyRes.error;
-    }
+    const uglifyRes = await minify(content);
     data[mk.fs.FileContent] = uglifyRes.code;
     return data;
   });
@@ -91,12 +86,12 @@ import * as nodepath from 'path';
    * Now the data list is like:
    * [
    *   {
-   *      SrcDir: './test_files/',
+   *      SrcDir: './files/',
    *      FilePath: 'a.js',
    *      Content: 'Uglified content ...',
    *    },
    *    {
-   *      SrcDir: './test_files/',
+   *      SrcDir: './files/',
    *      FilePath: 'sub/b/js',
    *      Content: 'Uglified content ...',
    *    },
@@ -104,16 +99,17 @@ import * as nodepath from 'path';
    * ]
    */
 
-  // Another example of modify the content, we merge all the content of previous files into one, and manually creates the DataObject
-  await files.reset('Merge into one file', async dataList => {
-    // set merged file as "bundle.js"
+  // Now let's merge these files into one file.
+  // We need to create a new data list.
+  await files.reset('Merge files', async (dataList) => {
+    // The name of the merged file.
     const destPath = 'bundle.js';
-    // merge contents of all files into a single string
+    // Merge contents of all files into a single string.
     let contents = '';
-    dataList.forEach(d => {
+    dataList.forEach((d) => {
       contents += d[mk.fs.FileContent] as string;
     });
-    // create a new DataObject
+    // Create a new `DataObject`.
     const bundleFileObject = {
       [mk.fs.SrcDir]: srcDir,
       [mk.fs.RelativeFile]: destPath,
@@ -125,27 +121,24 @@ import * as nodepath from 'path';
    * Now the data list is like:
    * [
    *   {
-   *      SrcDir: './test_files/',
-   *      FilePath: 'merged.js',
+   *      SrcDir: './files/',
+   *      FilePath: 'bundle.js',
    *      Content: 'Merged content',
    *    },
    * ]
    */
 
-  // Call writeToDirectory to save all files to a directory, in this case, only one file called `merged.js` which we created
-  await files.map(
-    'Write files',
-    mk.fs.writeToDirectory(`./dist_files/${nodepath.basename(__dirname)}`),
-  );
+  // Call `writeToDirectory` to save the data list to disk, in this case, the `dist/bundle.js` we just created.
+  await files.map('Write files', mk.fs.writeToDirectory(`./dist/`));
   await files.forEach('Dest files', mk.fs.printsDestFile);
   /**
    * Now the data list is like:
    * [
    *   {
-   *      SrcDir: './test_files/',
-   *      FilePath: 'merged.js',
+   *      SrcDir: './dist/',
+   *      FilePath: 'bundle.js',
    *      Content: 'Merged content',
-   *      DestFilePath: './dist_files/uglifyjs-and-merge/merged.js',
+   *      DestFilePath: './dist/bundle.js',
    *    },
    * ]
    */
@@ -156,35 +149,89 @@ Sample output:
 
 ```
 🦁 Job started
-> 3
-> Done in 1ms
+> 2 item(s)
+[
+  { 'file.relative_file': 'a.js', 'file.src_dir': './files/' },
+  { 'file.relative_file': 'sub/b.js', 'file.src_dir': './files/' }
+]
+> Done in 2ms
 🦁 Source files
 a.js
-b.js
-subdir/c.js
-> Done in 3ms
+sub/b.js
+[
+  { 'file.relative_file': 'a.js', 'file.src_dir': './files/' },
+  { 'file.relative_file': 'sub/b.js', 'file.src_dir': './files/' }
+]
+> Done in 2ms
 🦁 Read files
-> Done in 51ms
+[
+  {
+    'file.relative_file': 'a.js',
+    'file.src_dir': './files/',
+    'file.content': '<file contents>'
+  },
+  {
+    'file.relative_file': 'sub/b.js',
+    'file.src_dir': './files/',
+    'file.content': '<file contents>'
+  }
+]
+> Done in 3ms
 🦁 Uglify
-> Done in 19ms
-🦁 Merge into one file
-> 3 >> 1
+[
+  {
+    'file.relative_file': 'a.js',
+    'file.src_dir': './files/',
+    'file.content': '<file contents>'
+  },
+  {
+    'file.relative_file': 'sub/b.js',
+    'file.src_dir': './files/',
+    'file.content': '<file contents>'
+  }
+]
+> Done in 16ms
+🦁 Merge files
+> 2 --> 1 item(s)
+[
+  {
+    'file.src_dir': './files/',
+    'file.relative_file': 'bundle.js',
+    'file.content': '<file contents>'
+  }
+]
 > Done in 1ms
 🦁 Write files
+[
+  {
+    'file.src_dir': './files/',
+    'file.relative_file': 'bundle.js',
+    'file.content': '<file contents>',
+    'file.dest_file': 'dist/bundle.js'
+  }
+]
 > Done in 4ms
 🦁 Dest files
-dist_files/uglifyjs-and-merge/bundle.js
-> Done in 1ms
+dist\bundle.js
+[
+  {
+    'file.src_dir': './files/',
+    'file.relative_file': 'bundle.js',
+    'file.content': '<file contents>',
+    'file.dest_file': 'dist/bundle.js'
+  }
+]
+> Done in 7ms
 ```
 
 ## Common Errors
 
 ### File content not found on data object
 
-This happens when you call `writeToDirectory` and `DataObject.get(FS.FileContent)` returns `null` or `undefined`, possible reasons:
+This happens in `writeToDirectory` when it gets a `null` or `undefined` when calling `DataObject.get(FS.FileContent)`. Possible reasons:
 
-- You forgot to call `readToString`, or called `readToString` without the `await` keyword before a call to `writeToDirectory`.
-- You accidentally set this value to `null` or `undefined`, if you want to write to an empty file, set it to an empty string (`''`), or if you want to remove this file, use `DataList.filter` or `DataList.reset` instead.
+- You forgot to call `readToString`, or called `readToString` without the `await` keyword before calling `writeToDirectory`.
+- You accidentally set the data entry value to `null` or `undefined`, if you want to write to an empty file, set it to an empty string (`''`), or if you want to remove this file, use `DataList.filter` or `DataList.reset` instead.
 
 ### Relative path not found on data object
 
