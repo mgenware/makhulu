@@ -22,7 +22,7 @@ export default class DataList {
     if (!values) {
       return new DataList();
     }
-    return new DataList(values.map(value => ({ [key]: value })));
+    return new DataList(values.map((value) => ({ [key]: value })));
   }
 
   list: DataObject[];
@@ -43,7 +43,7 @@ export default class DataList {
 
   values(key: string): unknown {
     throwIfFalsy(key, 'key');
-    return this.list.map(d => d[key]);
+    return this.list.map((d) => d[key]);
   }
 
   async map(name: string, fn: MapFn): Promise<void> {
@@ -112,10 +112,11 @@ export default class DataList {
 
   private logLength() {
     if (this.prevLength !== this.list.length) {
-      const msg =
+      let msg =
         this.prevLength >= 0
           ? `${this.prevLength} >> ${this.list.length}`
           : `${this.list.length}`;
+      msg += ' item(s)';
       log(colors.yellow(`> ${msg}`));
       this.prevLength = this.list.length;
     }
@@ -133,7 +134,7 @@ export default class DataList {
 
   private progressive<T>(promises: Array<Promise<T>>): Array<Promise<T>> {
     const bar = this.progressBar();
-    return promises.map(async p => {
+    return promises.map(async (p) => {
       const result = await p;
       bar.tick();
       return result;
