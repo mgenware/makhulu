@@ -114,7 +114,7 @@ export default class DataList {
     if (this.prevLength !== this.list.length) {
       let msg =
         this.prevLength >= 0
-          ? `${this.prevLength} >> ${this.list.length}`
+          ? `${this.prevLength} --> ${this.list.length}`
           : `${this.list.length}`;
       msg += ' item(s)';
       log(colors.yellow(`> ${msg}`));
