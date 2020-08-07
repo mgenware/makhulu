@@ -4,10 +4,13 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "target": "ES2018",
+    "target": "es2018",
+    "lib": ["es2018"],
     "declaration": true,
     "strict": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "experimentalDecorators": true,
+    "newLine": "lf"
   }
 }
