@@ -1,10 +1,11 @@
-import * as mk from '../';
 import { promisify } from 'util';
 import * as fs from 'fs';
 import * as assert from 'assert';
+import * as mk from '..';
+
 const readFileAsync = promisify(fs.readFile);
 
-export function testDataList(src: mk.DataList, arr: object[]) {
+export function testDataList(src: mk.DataList, arr: Record<string, unknown>[]) {
   assert.deepEqual(src.list, arr);
 }
 
@@ -20,7 +21,7 @@ export function compareFileData(a: any, b: any): number {
   );
 }
 
-export function testFileData(a: mk.DataList, b: object[]) {
+export function testFileData(a: mk.DataList, b: Record<string, unknown>[]) {
   const src = a.list;
   src.sort(compareFileData);
   b.sort(compareFileData);

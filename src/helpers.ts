@@ -1,7 +1,7 @@
-import { DataList } from './main';
+import DataList from './dataList';
 
 export function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function count(length: number, start = 0): DataList {

@@ -1,10 +1,11 @@
+/* eslint-disable class-methods-use-this */
 import filterAsync from 'node-filter-async';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as colors from 'ansi-colors';
-import log from './log';
 import * as ProgressBar from 'progress';
 import { performance } from 'perf_hooks';
 import * as prettyMS from 'pretty-ms';
+import log from './log';
 
 export interface DataObject {
   [key: string]: unknown;
@@ -26,8 +27,10 @@ export default class DataList {
   }
 
   list: DataObject[];
-  // defaults to -1 (not set)
+
+  // defaults to -1 (not set).
   private prevLength = -1;
+
   private startTime = 0;
 
   constructor(list?: DataObject[]) {

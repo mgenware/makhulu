@@ -1,11 +1,13 @@
-import DataList, { DataObject, MapFn } from './dataList';
+/* eslint-disable no-param-reassign */
 import * as fastGlob from 'fast-glob';
 import { throwIfFalsy } from 'throw-if-arg-empty';
 import * as nodePath from 'path';
+import * as fs from 'fs';
 import * as mkdirp from 'make-dir';
 import { promisify, inspect } from 'util';
 import log from './log';
-import * as fs from 'fs';
+import DataList, { DataObject, MapFn } from './dataList';
+
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
 
@@ -36,7 +38,7 @@ export default class FS {
     throwIfFalsy(baseDir, 'baseDir');
     if (baseDir.includes('*') || baseDir.includes('?')) {
       throw new Error(
-        `"baseDir" looks like a glob, please specify "baseDir" as a valid file path and only use glob in the second "pattern" parameter, "baseDir" value: "${baseDir}"`,
+        `\`baseDir\` looks like a glob, please specify \`baseDir\` as a valid file path and only use glob in the second \`pattern\` parameter, \`baseDir\` value: "${baseDir}"`,
       );
     }
 
@@ -48,7 +50,7 @@ export default class FS {
       cwd: baseDir,
     });
     return new DataList(
-      (paths as string[]).map(p => ({
+      (paths as string[]).map((p) => ({
         [FS.RelativeFile]: p,
         [FS.SrcDir]: baseDir,
       })),

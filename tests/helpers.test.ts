@@ -1,5 +1,5 @@
-import * as mk from '../';
 import * as assert from 'assert';
+import * as mk from '..';
 
 mk.setLoggingEnabled(false);
 

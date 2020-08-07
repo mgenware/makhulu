@@ -36,6 +36,8 @@
     "@typescript-eslint/parser": "^3.8.0",
     "daizong": "^0.8.0",
     "eslint": "^7.6.0",
+    "eslint-config-airbnb-typescript-lite": "^9.1.0",
+    "eslint-plugin-import": "^2.22.0",
     "it-throws": "^3.2.1",
     "mocha": "^8.1.0",
     "source-map-support": "^0.5.19",

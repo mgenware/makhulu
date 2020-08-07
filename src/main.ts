@@ -3,6 +3,6 @@ export { default as fs, FSSrcOptions } from './fs';
 export { setLoggingEnabled } from './log';
 export * from './helpers';
 
-process.on('unhandledRejection', reason => {
+process.on('unhandledRejection', (reason) => {
   throw new Error('Unhandled error: ' + reason);
 });

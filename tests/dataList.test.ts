@@ -1,16 +1,17 @@
-import { DataList, setLoggingEnabled } from '../';
-import { testDataList } from './common';
+/* eslint-disable no-param-reassign */
 import * as assert from 'assert';
 import { itRejects } from 'it-throws';
+import { DataList, setLoggingEnabled } from '..';
+import { testDataList } from './common';
 
 setLoggingEnabled(false);
 
 function task(): DataList {
-  return new DataList([1, 2].map(d => ({ num: d })));
+  return new DataList([1, 2].map((d) => ({ num: d })));
 }
 
 function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 it('ctor', () => {
@@ -30,7 +31,7 @@ it('values', () => {
 
 it('map', async () => {
   const t = task();
-  await t.map('t', async d => {
+  await t.map('t', async (d) => {
     if ((d.num as number) % 2 === 0) {
       await sleep(300);
     }
@@ -57,7 +58,7 @@ it('map with error', async () => {
 
 it('filter', async () => {
   const t = task();
-  await t.filter('t', async d => {
+  await t.filter('t', async (d) => {
     if ((d.num as number) % 2 === 0) {
       await sleep(300);
     }
@@ -70,7 +71,7 @@ it('reset', async () => {
   const t = task();
   const prevEntries = t.list;
   await sleep(300);
-  await t.reset('t', async entries => {
+  await t.reset('t', async (entries) => {
     const copied = [...entries];
     copied.reverse();
     return copied;

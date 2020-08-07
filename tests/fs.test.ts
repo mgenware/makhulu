@@ -1,6 +1,7 @@
-import * as mk from '../';
-import { testFileData, testFileAsync } from './common';
+/* eslint-disable no-param-reassign */
 import { itRejects } from 'it-throws';
+import * as mk from '..';
+import { testFileData, testFileAsync } from './common';
 
 const FilesDir = './tests/glob-files';
 
@@ -118,7 +119,7 @@ it('writeToDirectory (change content)', async () => {
   const dest = './dist_tests/files/mod';
   const files = await mk.fs.src(FilesDir, '**/*.txt');
   await files.map('Read files', mk.fs.readToString);
-  await files.map('Update files', async d => {
+  await files.map('Update files', async (d) => {
     const content = d[mk.fs.FileContent] as string;
     d[mk.fs.FileContent] = '*' + content;
     return d;
@@ -133,7 +134,7 @@ it('writeToDirectory (null content)', async () => {
   const dest = './dist_tests/files/_';
   const files = await mk.fs.src(FilesDir, 'empty.bin');
   await files.map('Read files', mk.fs.readToString);
-  await files.map('Update files', async d => {
+  await files.map('Update files', async (d) => {
     d[mk.fs.FileContent] = null;
     return d;
   });
