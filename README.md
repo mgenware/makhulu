@@ -38,6 +38,10 @@ import { minify } from 'terser';
   // Select all .js files as initial data list.
   const srcDir = './files/';
   const files = await mk.fs.src(srcDir, '**/*.js');
+
+  // Enable debug output.
+  files.verbose = true;
+
   /**
    * Now the data list is something like:
    * [

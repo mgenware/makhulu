@@ -28,6 +28,9 @@ export default class DataList {
 
   list: DataObject[];
 
+  // Enables debug output.
+  verbose = false;
+
   // defaults to -1 (not set).
   private prevLength = -1;
 
@@ -99,7 +102,9 @@ export default class DataList {
 
   private onActionEnded(_: string) {
     this.logLength();
-    this.logList();
+    if (this.verbose) {
+      this.logList();
+    }
     const duration = performance.now() - this.startTime;
     this.logTime(prettyMS(duration));
   }
